@@ -95,4 +95,3 @@ Each idea:
 - Uses enterprise platform concepts: cloud deployment, microservices, observability, QA, and security.
 - Yields a demonstrable product (dashboard + agent in action).
 
-Choose the one that resonates most with your team’s interests and skill sets. The critical success criterion: **ship with at least one working agent by semester’s end.**
