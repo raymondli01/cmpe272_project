@@ -120,3 +120,13 @@ Each idea:
 - Uses enterprise platform concepts: cloud deployment, microservices, observability, QA, and security.
 - Yields a demonstrable product (dashboard + agent in action).
 
+---
+
+# Team Members
+- Raymond Li
+- Sophia Atendido
+- Jack Liang
+- Dhruv Verma
+
+---
+
