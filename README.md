@@ -1,6 +1,6 @@
-# Agentic Enterprise Software Platform – Team Project Ideas (Fall 2025)
+# CMPE-272 Project Proposals - Team 4
 
-This semester focuses on building **enterprise systems with embedded autonomous agents** that can perceive, decide, and act. Below are four scoped project ideas designed for a team of four. Each balances feasibility with ambition, and touches on cloud, microservices, observability, QA, and security.
+An exploration of potential final projects for Team 4, each centered on building an autonomous agent to solve an enterprise-level challenge.
 
 -----
 
