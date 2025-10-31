@@ -1,5 +1,3 @@
-# Project
-
 # A.W.A.R.E. - Agent for Water Autonomy, Resilience, and Efficiency
 
 A proactive, self-healing AI agent for intelligent water utility management. This project is developed for the **CMPE-272: Enterprise Software Platforms** course at **San Jose State University (Fall 2025)**.
