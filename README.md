@@ -1,10 +1,4 @@
-# A.W.A.R.E
-
-An exploration of potential final projects for Team 4, each centered on building an autonomous agent to solve an enterprise-level challenge.
-
------
-
-# Leading Project Idea
+# Project
 
 # A.W.A.R.E. - Agent for Water Autonomy, Resilience, and Efficiency
 
@@ -32,6 +26,8 @@ A.W.A.R.E. is a proactive control system built on a **digital twin** of a munici
 - Sophia Atendido
 - Jack Liang
 - Dhruv Verma
+
+# Team Name - A.W.A.R.E
 
 ---
 
