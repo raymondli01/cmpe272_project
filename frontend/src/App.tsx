@@ -84,47 +84,21 @@ function App() {
       </header>
       <main>
         <section>
-          <h3
-            style={{
-              fontSize: "1.5em",
-              marginBottom: "0.5em",
-              color: "#009688",
-              letterSpacing: "1px",
-            }}
-          >
-            Pipe Status
-          </h3>
-          <div className="aware-card aware-info-card">
-            <strong>Column Info:</strong>
-            <ul>
-              <li>
-                <b>Pipe ID:</b> Unique identifier for each pipe in the network.
-              </li>
-              <li>
-                <b>Pressure (psi):</b> Water pressure inside the pipe, measured
-                in pounds per square inch.
-                <br />
-                <span style={{ color: "#4caf50" }}>
-                  Normal: 60–100 psi
-                </span>.{" "}
-                <span style={{ color: "#ff5252" }}>
-                  Low pressure (&lt;60 psi) may indicate a leak.
-                </span>
-              </li>
-              <li>
-                <b>Acoustic:</b> Sensor reading of sound/vibration in the pipe.
-                <br />
-                <span style={{ color: "#4caf50" }}>Normal: 0.0–0.7</span>.{" "}
-                <span style={{ color: "#ff5252" }}>
-                  High values (&gt;0.7) can signal abnormal activity or leaks.
-                </span>
-              </li>
-              <li>
-                <b>Status:</b> Shows if a leak is detected (
-                <span style={{ color: "#ff5252" }}>🚨</span>) or if the pipe is
-                normal (<span style={{ color: "#4caf50" }}>●</span>).
-              </li>
-            </ul>
+          <div className="aware-card" style={{ marginBottom: "2em" }}>
+            <h3
+              style={{
+                fontSize: "2em",
+                marginBottom: "0.7em",
+                color: "#00bfae",
+                letterSpacing: "2px",
+                fontWeight: 700,
+                textShadow: "0 2px 8px #00968855",
+                textTransform: "uppercase",
+                textAlign: "center",
+              }}
+            >
+              Pipe Status
+            </h3>
           </div>
           <div className="aware-card aware-table-card">
             <table className="aware-table">
@@ -163,6 +137,38 @@ function App() {
                 ))}
               </tbody>
             </table>
+          </div>
+          <div className="aware-card aware-info-card">
+            <strong>Column Info:</strong>
+            <ul>
+              <li>
+                <b>Pipe ID:</b> Unique identifier for each pipe in the network.
+              </li>
+              <li>
+                <b>Pressure (psi):</b> Water pressure inside the pipe, measured
+                in pounds per square inch.
+                <br />
+                <span style={{ color: "#4caf50" }}>
+                  Normal: 60–100 psi
+                </span>.{" "}
+                <span style={{ color: "#ff5252" }}>
+                  Low pressure (&lt;60 psi) may indicate a leak.
+                </span>
+              </li>
+              <li>
+                <b>Acoustic:</b> Sensor reading of sound/vibration in the pipe.
+                <br />
+                <span style={{ color: "#4caf50" }}>Normal: 0.0–0.7</span>.{" "}
+                <span style={{ color: "#ff5252" }}>
+                  High values (&gt;0.7) can signal abnormal activity or leaks.
+                </span>
+              </li>
+              <li>
+                <b>Status:</b> Shows if a leak is detected (
+                <span style={{ color: "#ff5252" }}>🚨</span>) or if the pipe is
+                normal (<span style={{ color: "#4caf50" }}>●</span>).
+              </li>
+            </ul>
           </div>
         </section>
         <section>
