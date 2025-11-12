@@ -53,25 +53,51 @@
   border-bottom: 2px solid #009688;
 }
 
-.aware-table {
-  margin: 1rem auto;
+.aware-card {
   background: #222b3a;
-  color: #fff;
-  border-collapse: collapse;
-  width: 40%;
+  color: #eaf6fb;
+  border-radius: 12px;
   box-shadow: 0 2px 8px #0003;
+  padding: 1.5em 2em;
+  margin: 1.5em auto;
+  width: 80%;
+  max-width: 900px;
+}
+
+.aware-info-card ul {
+  margin: 0.7em 0 0 1em;
+  padding: 0;
+  font-size: 1.05em;
+}
+
+.aware-table-card {
+  padding: 1em 2em;
+}
+
+.aware-table {
+  width: 100%;
+  margin: 0;
+  font-size: 1.1em;
 }
 
 .aware-table th,
 .aware-table td {
+  padding: 0.7em 1em;
   border: 1px solid #009688;
-  padding: 0.4rem 0.7rem;
   text-align: center;
 }
 
 .aware-table th {
   background: #009688;
   color: #fff;
+}
+
+.aware-desc-card {
+  background: #1e2636;
+  color: #eaf6fb;
+  font-size: 1.1em;
+  margin-top: 2em;
+  text-align: center;
 }
 
 .aware-footer {
