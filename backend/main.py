@@ -17,7 +17,7 @@ app.add_middleware(
 # Root Endpoint
 @app.get("/")
 def read_root():
-    return {"message": "A.W.A.R.E. backend is running"}
+    return {"status": "ok"}
 
 
 # Sensor Data Simulation
