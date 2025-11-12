@@ -36,3 +36,49 @@
     transform: rotate(360deg);
   }
 }
+
+.aware-container {
+  background: #181f2a;
+  color: #eaf6fb;
+  min-height: 100vh;
+  font-family: "Segoe UI", Arial, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+.aware-header {
+  padding: 2rem 0 1rem 0;
+  text-align: center;
+  background: #1e2636;
+  border-bottom: 2px solid #009688;
+}
+
+.aware-table {
+  margin: 1rem auto;
+  background: #222b3a;
+  color: #fff;
+  border-collapse: collapse;
+  width: 40%;
+  box-shadow: 0 2px 8px #0003;
+}
+
+.aware-table th,
+.aware-table td {
+  border: 1px solid #009688;
+  padding: 0.4rem 0.7rem;
+  text-align: center;
+}
+
+.aware-table th {
+  background: #009688;
+  color: #fff;
+}
+
+.aware-footer {
+  text-align: center;
+  padding: 1rem 0;
+  background: #1e2636;
+  border-top: 2px solid #009688;
+  margin-top: 2rem;
+  font-size: 0.9rem;
+}
