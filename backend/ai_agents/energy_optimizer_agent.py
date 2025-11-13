@@ -185,6 +185,14 @@ Respond ONLY with a JSON object:
             # Parse response
             result = json.loads(response.choices[0].message.content)
 
+            # Store schedules in database
+            await self._store_energy_schedules(result, data)
+
+            # Calculate efficiency gain
+            baseline_cost = 350  # Baseline daily cost ($350)
+            savings = result.get("total_estimated_savings", 0)
+            efficiency_gain = (savings / baseline_cost * 100) if baseline_cost > 0 else 0
+
             return {
                 "status": "success",
                 "optimizations": result.get("optimizations", []),
@@ -192,6 +200,7 @@ Respond ONLY with a JSON object:
                 "risk_assessment": result.get("risk_assessment", ""),
                 "pressure_guarantee": result.get("pressure_guarantee", ""),
                 "total_estimated_savings": result.get("total_estimated_savings", 0),
+                "efficiency_gain_percent": round(efficiency_gain, 1),
                 "baseline_data": {
                     "current_avg_pressure": data["current_avg_pressure"],
                     "num_pumps": len(data["pumps"]),
@@ -208,6 +217,43 @@ Respond ONLY with a JSON object:
                 "error": str(e),
                 "optimizations": [],
             }
+
+    async def _store_energy_schedules(self, result: Dict[str, Any], data: Dict[str, Any]):
+        """Store energy optimization schedules in database"""
+        try:
+            from datetime import date
+            agent_id = await self._get_agent_id()
+            today = date.today()
+
+            # Calculate efficiency gain
+            baseline_cost = 350
+            savings = result.get("total_estimated_savings", 0)
+            efficiency_gain = (savings / baseline_cost * 100) if baseline_cost > 0 else 0
+
+            for optimization in result.get("optimizations", []):
+                # Find pump ID if available
+                pump_name = optimization.get("pump_name", "")
+                pump_id = None
+                for pump in data.get("pumps", []):
+                    if pump["name"] == pump_name:
+                        pump_id = pump.get("id")
+                        break
+
+                await supabase_client.insert("energy_schedules", {
+                    "schedule_date": today.isoformat(),
+                    "pump_id": pump_id,
+                    "pump_name": pump_name,
+                    "hourly_schedule": optimization.get("schedule", []),
+                    "estimated_savings_usd": optimization.get("estimated_daily_savings_usd", 0),
+                    "efficiency_gain_percent": round(efficiency_gain, 1),
+                    "reasoning": optimization.get("reasoning", ""),
+                    "created_by_agent": agent_id
+                })
+
+            print(f"✓ Stored {len(result.get('optimizations', []))} energy schedules")
+
+        except Exception as e:
+            print(f"Error storing energy schedules: {e}")
 
     async def create_decision_record(self, optimization_result: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         """

@@ -23,14 +23,29 @@ const Energy = () => {
     },
   });
 
+  // Fetch AI-generated energy schedules
+  const { data: energySchedules } = useQuery({
+    queryKey: ['energy_schedules'],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from('energy_schedules')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(10);
+      return data || [];
+    },
+  });
+
+  // Get latest schedule metrics
+  const latestSchedule = energySchedules?.[0];
+  const totalSavings = latestSchedule?.estimated_savings_usd || 0;
+  const efficiencyGain = latestSchedule?.efficiency_gain_percent || 0;
+
   const applySchedule = () => {
     toast.success('Off-peak schedule applied', {
-      description: 'Pump operations optimized for energy savings. Projected savings: $142.50/day',
+      description: `Pump operations optimized for energy savings. Projected savings: $${totalSavings.toFixed(2)}/day`,
     });
   };
-
-  const totalSavings = 142.50;
-  const efficiencyGain = 18.5;
 
   return (
     <div className="space-y-6">
@@ -133,41 +148,40 @@ const Energy = () => {
           <CardDescription>AI-generated schedule for maximum cost savings</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <div className="flex justify-between items-center p-3 rounded-lg bg-success/10 border border-success/20">
-              <div>
-                <p className="font-medium">Off-Peak Filling (00:00 - 06:00)</p>
-                <p className="text-sm text-muted-foreground">Tank T1 to 90% capacity</p>
+          {energySchedules && energySchedules.length > 0 ? (
+            <>
+              <div className="space-y-2">
+                {energySchedules.map((schedule, idx) => (
+                  <div key={idx} className="flex justify-between items-center p-3 rounded-lg bg-primary/5 border border-primary/20">
+                    <div className="flex-1">
+                      <p className="font-medium">{schedule.pump_name || `Pump ${idx + 1}`}</p>
+                      <p className="text-sm text-muted-foreground line-clamp-1">
+                        {schedule.reasoning || 'AI-optimized schedule'}
+                      </p>
+                      {schedule.estimated_savings_usd > 0 && (
+                        <p className="text-xs text-green-600 mt-1">
+                          Saves ${schedule.estimated_savings_usd.toFixed(2)}/day
+                        </p>
+                      )}
+                    </div>
+                    <Badge variant="default">AI Generated</Badge>
+                  </div>
+                ))}
               </div>
-              <Badge variant="default">Active</Badge>
-            </div>
-            <div className="flex justify-between items-center p-3 rounded-lg bg-muted/50 border border-border">
-              <div>
-                <p className="font-medium">Maintenance Window (06:00 - 07:00)</p>
-                <p className="text-sm text-muted-foreground">Minimal pumping</p>
-              </div>
-              <Badge variant="secondary">Scheduled</Badge>
-            </div>
-            <div className="flex justify-between items-center p-3 rounded-lg bg-warning/10 border border-warning/20">
-              <div>
-                <p className="font-medium">Peak Demand (17:00 - 21:00)</p>
-                <p className="text-sm text-muted-foreground">Tank discharge mode</p>
-              </div>
-              <Badge variant="secondary">Scheduled</Badge>
-            </div>
-            <div className="flex justify-between items-center p-3 rounded-lg bg-success/10 border border-success/20">
-              <div>
-                <p className="font-medium">Night Cycle (22:00 - 24:00)</p>
-                <p className="text-sm text-muted-foreground">Top-up refill</p>
-              </div>
-              <Badge variant="default">Scheduled</Badge>
-            </div>
-          </div>
 
-          <Button className="w-full gap-2" onClick={applySchedule}>
-            <Zap className="w-4 h-4" />
-            Apply Optimized Schedule
-          </Button>
+              <Button className="w-full gap-2" onClick={applySchedule}>
+                <Zap className="w-4 h-4" />
+                Apply Optimized Schedule
+              </Button>
+            </>
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-muted-foreground mb-4">No AI-generated schedules yet</p>
+              <p className="text-sm text-muted-foreground">
+                Run the Energy Optimizer Agent to generate optimized pump schedules
+              </p>
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>

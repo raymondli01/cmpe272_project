@@ -1,6 +1,6 @@
 import fastapi
 import fastapi.middleware.cors
-from ai_agents import AgentCoordinator
+from ai_agents import AgentCoordinator, AnalyticsAgent
 from ai_agents.supabase_client import supabase_client
 
 app = fastapi.FastAPI(title="AWARE Water Management System API")
@@ -14,8 +14,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize agent coordinator
+# Initialize agent coordinator and analytics agent
 coordinator = AgentCoordinator()
+analytics_agent = AnalyticsAgent()
 
 
 # Root Endpoint
@@ -125,6 +126,19 @@ async def run_safety_monitoring():
     """
     try:
         result = await coordinator.run_safety_monitoring()
+        return result
+    except Exception as e:
+        return {"status": "error", "error": str(e)}
+
+
+@app.post("/ai/generate-analytics")
+async def generate_analytics():
+    """
+    Generate all AI analytics: NRW, uptime, demand forecast, and energy metrics.
+    This populates the dashboard with fresh AI-generated data.
+    """
+    try:
+        result = await analytics_agent.generate_all_analytics()
         return result
     except Exception as e:
         return {"status": "error", "error": str(e)}

@@ -26,6 +26,7 @@ const Agents = () => {
   const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
   const [agentResult, setAgentResult] = useState<AgentResult | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [runningAgentId, setRunningAgentId] = useState<string | null>(null);
 
   const { data: agents } = useQuery({
     queryKey: ['agents'],
@@ -36,15 +37,21 @@ const Agents = () => {
   });
 
   const runAgentMutation = useMutation({
-    mutationFn: async (agentName: string) => {
-      // Map agent names to API endpoints
-      const endpointMap: Record<string, string> = {
-        'Leak Preemption Agent': '/ai/leak-detection',
-        'Energy Optimizer Agent': '/ai/energy-optimization',
-        'Safety Monitor Agent': '/ai/safety-monitoring',
-      };
+    mutationFn: async ({ agentName, agentId }: { agentName: string; agentId: string }) => {
+      setRunningAgentId(agentId);
 
-      const endpoint = endpointMap[agentName] || '/ai/analyze';
+      // Map agent names/roles to API endpoints - more flexible matching
+      let endpoint = '/ai/analyze'; // default fallback
+
+      const nameLower = agentName.toLowerCase();
+      if (nameLower.includes('leak')) {
+        endpoint = '/ai/leak-detection';
+      } else if (nameLower.includes('energy') || nameLower.includes('optimizer')) {
+        endpoint = '/ai/energy-optimization';
+      } else if (nameLower.includes('safety')) {
+        endpoint = '/ai/safety-monitoring';
+      }
+
       const response = await fetch(`http://localhost:8000${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -56,23 +63,25 @@ const Agents = () => {
 
       return response.json();
     },
-    onSuccess: (data, agentName) => {
+    onSuccess: (data, variables) => {
       setAgentResult(data);
-      setSelectedAgent(agentName);
+      setSelectedAgent(variables.agentName);
       setIsDialogOpen(true);
-      toast.success(`${agentName} completed analysis`, {
+      setRunningAgentId(null);
+      toast.success(`${variables.agentName} completed analysis`, {
         description: 'View results in the dialog',
       });
     },
-    onError: (error, agentName) => {
-      toast.error(`Failed to run ${agentName}`, {
+    onError: (error, variables) => {
+      setRunningAgentId(null);
+      toast.error(`Failed to run ${variables.agentName}`, {
         description: error instanceof Error ? error.message : 'Unknown error',
       });
     },
   });
 
-  const runSimulation = (agentName: string) => {
-    runAgentMutation.mutate(agentName);
+  const runSimulation = (agentName: string, agentId: string) => {
+    runAgentMutation.mutate({ agentName, agentId });
   };
 
   return (
@@ -136,10 +145,10 @@ const Agents = () => {
               <Button
                 variant="outline"
                 className="w-full gap-2"
-                onClick={() => runSimulation(agent.name)}
-                disabled={runAgentMutation.isPending}
+                onClick={() => runSimulation(agent.name, agent.id)}
+                disabled={runningAgentId === agent.id}
               >
-                {runAgentMutation.isPending ? (
+                {runningAgentId === agent.id ? (
                   <>
                     <Loader2 className="w-4 h-4 animate-spin" />
                     Analyzing...
@@ -171,18 +180,24 @@ const Agents = () => {
 
           <ScrollArea className="flex-1 pr-4">
             <div className="space-y-6">
-              {/* Status */}
-              {agentResult && (
-                <Alert>
-                  <CheckCircle className="h-4 w-4" />
-                  <AlertTitle>Analysis Complete</AlertTitle>
+              {/* Status Alert */}
+              {agentResult?.status && (
+                <Alert variant={agentResult.status === 'success' ? 'default' : 'destructive'}>
+                  {agentResult.status === 'success' ? (
+                    <CheckCircle className="h-4 w-4 text-green-500" />
+                  ) : (
+                    <AlertTriangle className="h-4 w-4" />
+                  )}
+                  <AlertTitle>
+                    {agentResult.status === 'success' ? 'Analysis Complete' : 'Analysis Failed'}
+                  </AlertTitle>
                   <AlertDescription>
-                    Status: {agentResult.status}
+                    {agentResult.error || `Status: ${agentResult.status}`}
                   </AlertDescription>
                 </Alert>
               )}
 
-              {/* Leak Detection Results */}
+              {/* Leak Detection Results (direct response) */}
               {agentResult?.leaks_detected && (
                 <div className="space-y-4">
                   <h3 className="font-semibold text-lg">Leaks Detected ({agentResult.leaks_detected.length})</h3>
@@ -280,48 +295,137 @@ const Agents = () => {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <h3 className="font-semibold text-lg">Energy Optimization</h3>
-                    {agentResult.total_estimated_savings && (
-                      <Badge variant="secondary" className="text-green-600">
-                        Save ${agentResult.total_estimated_savings}/day
+                    {agentResult.total_estimated_savings !== undefined && (
+                      <Badge variant="secondary" className="bg-green-50 text-green-700 border-green-200">
+                        💰 Save ${agentResult.total_estimated_savings.toFixed(2)}/day
                       </Badge>
                     )}
                   </div>
 
                   {agentResult.overall_strategy && (
-                    <Alert>
-                      <Info className="h-4 w-4" />
-                      <AlertTitle>Strategy</AlertTitle>
-                      <AlertDescription>{agentResult.overall_strategy}</AlertDescription>
+                    <Alert className="border-blue-200 bg-blue-50">
+                      <Info className="h-4 w-4 text-blue-600" />
+                      <AlertTitle className="text-blue-900">Optimization Strategy</AlertTitle>
+                      <AlertDescription className="text-blue-800">
+                        {agentResult.overall_strategy}
+                      </AlertDescription>
                     </Alert>
                   )}
 
-                  {agentResult.optimizations.map((opt: any, idx: number) => (
-                    <Card key={idx}>
-                      <CardHeader>
-                        <CardTitle className="text-base">{opt.pump_name}</CardTitle>
-                      </CardHeader>
-                      <CardContent className="space-y-3">
-                        <p className="text-sm text-muted-foreground">{opt.reasoning}</p>
-                        {opt.estimated_daily_savings_usd && (
-                          <p className="text-sm font-medium text-green-600">
-                            Estimated savings: ${opt.estimated_daily_savings_usd}/day
-                          </p>
-                        )}
-                      </CardContent>
-                    </Card>
-                  ))}
+                  {agentResult.optimizations.length === 0 ? (
+                    <Alert>
+                      <Info className="h-4 w-4" />
+                      <AlertTitle>No Optimizations Needed</AlertTitle>
+                      <AlertDescription>
+                        Current pump schedule is already optimal for energy costs
+                      </AlertDescription>
+                    </Alert>
+                  ) : (
+                    agentResult.optimizations.map((opt: any, idx: number) => (
+                      <Card key={idx} className="border-green-200">
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-base">{opt.pump_name}</CardTitle>
+                            {opt.estimated_daily_savings_usd && (
+                              <Badge variant="outline" className="text-green-600 border-green-300">
+                                ${opt.estimated_daily_savings_usd.toFixed(2)}/day
+                              </Badge>
+                            )}
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          {opt.reasoning && (
+                            <div>
+                              <p className="text-sm font-medium mb-1">Reasoning:</p>
+                              <p className="text-sm text-muted-foreground">{opt.reasoning}</p>
+                            </div>
+                          )}
+                          {opt.schedule && opt.schedule.length > 0 && (
+                            <div>
+                              <p className="text-sm font-medium mb-2">24-Hour Schedule:</p>
+                              <div className="grid grid-cols-6 gap-2">
+                                {opt.schedule.slice(0, 24).map((s: any, i: number) => (
+                                  <div
+                                    key={i}
+                                    className={`p-2 rounded text-center text-xs ${
+                                      s.status === 'on'
+                                        ? 'bg-green-100 text-green-800 border border-green-300'
+                                        : 'bg-gray-100 text-gray-600 border border-gray-300'
+                                    }`}
+                                  >
+                                    <div className="font-bold">{s.hour}h</div>
+                                    <div className="text-[10px]">{s.status?.toUpperCase()}</div>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
                 </div>
               )}
 
-              {/* Raw JSON for debugging */}
-              <details className="text-xs">
-                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
-                  View Raw Response
-                </summary>
-                <pre className="mt-2 p-4 bg-muted rounded-lg overflow-x-auto">
-                  {JSON.stringify(agentResult, null, 2)}
-                </pre>
-              </details>
+              {/* Summary Stats */}
+              {agentResult && (
+                <div className="pt-4 border-t border-border">
+                  <h3 className="font-semibold text-sm mb-3 text-muted-foreground">Analysis Summary</h3>
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Sensor counts from safety monitoring */}
+                    {agentResult.sensor_counts && (
+                      <>
+                        {agentResult.sensor_counts.pressure && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Pressure Sensors</p>
+                            <p className="text-2xl font-bold">{agentResult.sensor_counts.pressure}</p>
+                          </div>
+                        )}
+                        {agentResult.sensor_counts.flow && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Flow Sensors</p>
+                            <p className="text-2xl font-bold">{agentResult.sensor_counts.flow}</p>
+                          </div>
+                        )}
+                        {agentResult.sensor_counts.acoustic && (
+                          <div className="space-y-1">
+                            <p className="text-xs text-muted-foreground">Acoustic Sensors</p>
+                            <p className="text-2xl font-bold">{agentResult.sensor_counts.acoustic}</p>
+                          </div>
+                        )}
+                      </>
+                    )}
+                    {agentResult.sensor_count && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Sensors Analyzed</p>
+                        <p className="text-2xl font-bold">{agentResult.sensor_count}</p>
+                      </div>
+                    )}
+                    {agentResult.pipes_analyzed && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Pipes Analyzed</p>
+                        <p className="text-2xl font-bold">{agentResult.pipes_analyzed}</p>
+                      </div>
+                    )}
+                    {agentResult.total_estimated_savings !== undefined && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Est. Daily Savings</p>
+                        <p className="text-2xl font-bold text-green-600">
+                          ${agentResult.total_estimated_savings.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
+                    {agentResult.confidence_threshold && (
+                      <div className="space-y-1">
+                        <p className="text-xs text-muted-foreground">Confidence Threshold</p>
+                        <p className="text-2xl font-bold">
+                          {(agentResult.confidence_threshold * 100).toFixed(0)}%
+                        </p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </ScrollArea>
         </DialogContent>

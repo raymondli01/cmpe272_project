@@ -26,22 +26,44 @@ const Dashboard = () => {
     },
   });
 
-  const { data: sensors } = useQuery({
-    queryKey: ['sensors'],
+  // Fetch AI-generated analytics
+  const { data: analytics } = useQuery({
+    queryKey: ['ai_analytics'],
     queryFn: async () => {
-      const { data } = await supabase.from('sensors').select('*');
-      return data || [];
+      const { data } = await (supabase as any)
+        .from('ai_analytics')
+        .select('*')
+        .order('calculated_at', { ascending: false })
+        .limit(10);
+
+      // Convert to easy-to-use object
+      const analyticsMap: Record<string, any> = {};
+      data?.forEach((item: any) => {
+        analyticsMap[item.metric_name] = item.metric_value;
+      });
+      return analyticsMap;
+    },
+  });
+
+  // Fetch demand forecast
+  const { data: demandForecast } = useQuery({
+    queryKey: ['demand_forecasts'],
+    queryFn: async () => {
+      const { data } = await (supabase as any)
+        .from('demand_forecasts')
+        .select('*')
+        .order('hour', { ascending: true })
+        .limit(24);
+      return data?.map((d: any) => ({ hour: d.hour, demand: d.predicted_demand })) || [];
     },
   });
 
   const activeIncidents = events?.filter(e => e.state === 'open').length || 0;
-  const averagePressure = sensors?.filter(s => s.type === 'pressure')
-    .reduce((sum, s) => sum + (s.value || 0), 0) / (sensors?.filter(s => s.type === 'pressure').length || 1);
 
-  const mockDemandData = Array.from({ length: 24 }, (_, i) => ({
-    hour: i,
-    demand: 40 + Math.sin(i / 3) * 15 + Math.random() * 5,
-  }));
+  // Get AI-generated metrics with fallbacks
+  const nrwData = analytics?.non_revenue_water || {};
+  const uptimeData = analytics?.system_uptime || {};
+  const energyData = analytics?.energy_metrics || {};
 
   return (
     <div className="space-y-6">
@@ -63,8 +85,12 @@ const Dashboard = () => {
             <Droplets className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">12.4%</div>
-            <p className="text-xs text-muted-foreground">-2.1% from last month</p>
+            <div className="text-2xl font-bold">
+              {nrwData.nrw_percentage?.toFixed(1) || '12.4'}%
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {nrwData.trend_percentage > 0 ? '+' : ''}{nrwData.trend_percentage?.toFixed(1) || '-2.1'}% from last month
+            </p>
           </CardContent>
         </Card>
 
@@ -85,8 +111,12 @@ const Dashboard = () => {
             <Zap className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">$287</div>
-            <p className="text-xs text-muted-foreground">18% savings from optimization</p>
+            <div className="text-2xl font-bold text-success">
+              ${energyData.total_cost?.toFixed(0) || '287'}
+            </div>
+            <p className="text-xs text-muted-foreground">
+              {energyData.efficiency_gain?.toFixed(0) || '18'}% savings from optimization
+            </p>
           </CardContent>
         </Card>
 
@@ -96,7 +126,9 @@ const Dashboard = () => {
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">99.7%</div>
+            <div className="text-2xl font-bold">
+              {uptimeData.uptime_percentage?.toFixed(1) || '99.7'}%
+            </div>
             <p className="text-xs text-muted-foreground">Last 30 days</p>
           </CardContent>
         </Card>
@@ -110,20 +142,20 @@ const Dashboard = () => {
           </CardHeader>
           <CardContent>
             <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={mockDemandData}>
+              <LineChart data={demandForecast && demandForecast.length > 0 ? demandForecast : [{hour: 0, demand: 0}]}>
                 <XAxis dataKey="hour" stroke="hsl(var(--muted-foreground))" fontSize={12} />
                 <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} />
-                <Tooltip 
-                  contentStyle={{ 
-                    background: 'hsl(var(--card))', 
+                <Tooltip
+                  contentStyle={{
+                    background: 'hsl(var(--card))',
                     border: '1px solid hsl(var(--border))',
                     borderRadius: '0.5rem'
-                  }} 
+                  }}
                 />
-                <Line 
-                  type="monotone" 
-                  dataKey="demand" 
-                  stroke="hsl(var(--primary))" 
+                <Line
+                  type="monotone"
+                  dataKey="demand"
+                  stroke="hsl(var(--primary))"
                   strokeWidth={2}
                   dot={false}
                 />
