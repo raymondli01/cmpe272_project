@@ -1,34 +1,24 @@
-.App {
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
+@keyframes logo-spin {
   from {
     transform: rotate(0deg);
   }
@@ -37,96 +27,16 @@
   }
 }
 
-.aware-container {
-  background: #181f2a;
-  color: #eaf6fb;
-  min-height: 100vh;
-  font-family: "Segoe UI", Arial, sans-serif;
-  padding: 0;
-  margin: 0;
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
 }
 
-.aware-header {
-  padding: 2.5rem 0 1.5rem 0;
-  text-align: center;
-  background: linear-gradient(90deg, #1e2636 60%, #009688 100%);
-  border-bottom: 2px solid #009688;
-  box-shadow: 0 4px 16px #0002;
+.card {
+  padding: 2em;
 }
 
-.aware-card {
-  background: #222b3a;
-  color: #eaf6fb;
-  border-radius: 18px;
-  box-shadow: 0 4px 16px #0003;
-  padding: 2em 2.5em;
-  margin: 2em auto;
-  width: 85%;
-  max-width: 950px;
-  transition: box-shadow 0.2s;
-}
-
-.aware-card:hover {
-  box-shadow: 0 8px 24px #00968844;
-}
-
-.aware-info-card ul {
-  margin: 0.7em 0 0 1em;
-  padding: 0;
-  font-size: 1.05em;
-}
-
-.aware-table-card {
-  padding: 1em 2em;
-}
-
-.aware-table {
-  width: 100%;
-  margin: 0;
-  font-size: 1.1em;
-}
-
-.aware-table th,
-.aware-table td {
-  padding: 1em 1.2em;
-  border: 1px solid #009688;
-  text-align: center;
-  font-size: 1.15em;
-}
-
-.aware-table tr:hover {
-  background: #263043;
-  transition: background 0.2s;
-}
-
-.aware-table th {
-  background: #009688;
-  color: #fff;
-  font-size: 1.1em;
-  letter-spacing: 1px;
-}
-
-.aware-desc-card {
-  background: #1e2636;
-  color: #eaf6fb;
-  font-size: 1.15em;
-  margin-top: 2.5em;
-  text-align: center;
-  border-radius: 14px;
-  box-shadow: 0 2px 8px #0002;
-  padding: 1.5em 2em;
-}
-
-.aware-footer {
-  text-align: center;
-  padding: 1rem 0;
-  background: #1e2636;
-  border-top: 2px solid #009688;
-  margin-top: 2rem;
-  font-size: 0.9rem;
-}
-
-/* Add a little more spacing to main sections */
-main > section {
-  margin-bottom: 2.5em;
+.read-the-docs {
+  color: #888;
 }

@@ -1,111 +1,471 @@
-# A.W.A.R.E. - Agent for Water Autonomy, Resilience, and Efficiency
+# A.W.A.R.E. Water Management System
 
-A.W.A.R.E. is a proactive, self-healing AI agent designed for intelligent water utility management. This project was created for the **CMPE-272: Enterprise Software Platforms** course at **San Jose State University (Fall 2025)**.
+**Agent for Water Autonomy, Resilience & Efficiency**
 
-## Table of Contents
+A proactive, self-healing AI agent for municipal water utilities that couples a digital twin with multi-agent decision systems to anticipate failures, orchestrate autonomous responses, and optimize energy use.
 
-1. [Problem Statement](#1-the-problem)
-2. [Solution Overview](#2-our-solution-an-agentic-approach)
-3. [Key Features](#3-key-features)
-4. [Tech Stack](#tech-stack)
-5. [Installation & Usage](#installation--usage)
-6. [Project Resources](#project-resources)
-7. [Project Deliverables](#project-deliverables)
-8. [Project Team](#project-team)
+## Team
 
----
+- **Raymond Li** - raymond.li@sjsu.edu
+- **Sophia Atendido** - sophia.atendido@sjsu.edu
+- **Jack Liang** - jack.liang@sjsu.edu
+- **Dhruv Verma** - dhruv.verma@sjsu.edu
 
-## 1. The Problem
-
-Municipal water networks are critical yet fragile infrastructures. They face constant threats from aging pipes, unexpected leaks, potential contamination, and massive energy consumption. Current management systems are almost entirely **reactive**, addressing failures only _after_ they have caused significant water loss, service disruption, and potential public health risks.
-
-## 2. Our Solution: An Agentic Approach
-
-A.W.A.R.E. is a proactive control system built on a **digital twin** of a municipal water network. It leverages a multi-agent AI to monitor the network in real-time, predict failures before they occur, and take autonomous actions to ensure the system remains resilient, safe, and efficient. It shifts the paradigm from reactive maintenance to **proactive, self-healing orchestration**.
-
-## 3. Key Features
-
-- 💧 **Proactive Leak Pre-emption:** Analyzes acoustic and pressure data to detect and locate pipe fissures _before_ they burst. Autonomously isolates compromised sections by controlling smart valves, minimizing water loss and preventing service outages.
-- ⚡ **Dynamic Energy Optimization:** Forecasts water demand and monitors the real-time electricity price grid to shift energy-intensive operations (like filling reservoirs) to off-peak hours, drastically reducing operational costs.
-- 🗺️ **Real-time Network Visualization:** A comprehensive dashboard provides human operators with a live, intuitive view of the entire network's health, the agent's actions, and key performance indicators.
-- 🛑 **Autonomous Visual Isolation:** When a leak is detected, the agent automatically updates the status of the pipe in the system, triggering a real-time visual change on the network dashboard.
+**Course**: CMPE-272: Enterprise Software Platforms | SJSU Fall 2025
 
 ---
 
-## Tech Stack
+## Project Overview
 
-| Layer        | Technology                                                                                                                                                                                                                                         |
-| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Frontend** | ![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB) ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)                                                                      |
-| **Backend**  | ![Python](https://img.shields.io/badge/Python-3776AB?logo=python&logoColor=white) ![FastAPI](https://img.shields.io/badge/FastAPI-009688?logo=fastapi&logoColor=white) ![JSON](https://img.shields.io/badge/JSON-000000?logo=json&logoColor=white) |
+### Key Features
+
+- **Proactive Leak Detection**: AI agents monitor acoustic patterns and pressure anomalies to detect leaks before they become critical
+- **Autonomous Isolation**: Automatic pipe isolation when leaks are detected
+- **Energy Optimization**: Dynamic pump scheduling based on real-time pricing
+- **Digital Twin**: Real-time network visualization with live updates
+- **Multi-Agent System**: Coordinated AI agents for decision-making
+- **Incident Management**: Track and resolve system events
+- **Real-time Monitoring**: Live sensor data and network status
 
 ---
 
-## Installation & Usage
+## Architecture
+
+```
+aware-water-agent/
+├── backend/              # FastAPI backend
+│   ├── main.py          # API endpoints
+│   ├── requirements.txt # Python dependencies
+│   ├── .env            # Backend configuration
+│   └── README.md       # Backend documentation
+│
+├── frontend/            # React + TypeScript frontend
+│   ├── src/            # Source code
+│   │   ├── pages/     # Route pages
+│   │   ├── components/ # Reusable components
+│   │   ├── lib/       # Utilities and stores
+│   │   └── hooks/     # Custom React hooks
+│   ├── public/         # Static assets
+│   ├── package.json    # Node dependencies
+│   ├── .env           # Frontend configuration
+│   └── README.md      # Frontend documentation
+│
+├── supabase/           # Supabase configuration
+│   ├── config.toml    # Supabase settings
+│   └── migrations/    # Database migrations
+│
+├── WIREFRAMES.md       # Complete UI wireframes
+└── README.md          # This file
+```
+
+---
+
+## Prerequisites
+
+### Backend
+- Python 3.8 or higher
+- pip (Python package manager)
+
+### Frontend
+- Node.js 18 or higher
+- npm (comes with Node.js)
+
+---
+
+## Quick Start
+
+### 1. Clone the Repository
 
 ```bash
-# Backend Setup Instructions
+git clone <repository-url>
+cd aware-water-agent
+```
 
-# 1. Change to the backend directory
+### 2. Start the Backend
+
+```bash
+# Navigate to backend directory
 cd backend
 
-# 2. Create a Python virtual environment
+# Create a virtual environment (recommended)
 python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-# 3. Activate the virtual environment (Windows)
-venv\Scripts\activate
+# Install dependencies
+pip install -r requirements.txt
 
-#    (On macOS/Linux, use: source venv/bin/activate)
+# Start the server
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
 
-# 4. Upgrade pip and install all requirements
-python -m pip install --upgrade pip && pip install -r requirements.txt --verbose
+The backend API will be available at:
+- **API**: http://localhost:8000
+- **API Docs (Swagger)**: http://localhost:8000/docs
+- **API Docs (ReDoc)**: http://localhost:8000/redoc
 
-# 5. Start the FastAPI development server using Uvicorn
+### 3. Start the Frontend
+
+Open a new terminal:
+
+```bash
+# Navigate to frontend directory
+cd frontend
+
+# Install dependencies
+npm install
+
+# Start the development server
+npm run dev
+```
+
+The frontend will be available at:
+- **App**: http://localhost:5173
+
+---
+
+## Running Both Services
+
+You need to run both backend and frontend simultaneously:
+
+### Terminal 1 - Backend
+```bash
+cd backend
+source venv/bin/activate  # If using virtual environment
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+```
+
+### Terminal 2 - Frontend
+```bash
+cd frontend
+npm run dev
+```
+
+---
+
+## API Endpoints
+
+### Backend (FastAPI)
+
+#### GET `/`
+Health check endpoint
+```json
+{
+  "status": "ok",
+  "message": "AWARE Water Management System API"
+}
+```
+
+#### GET `/sensors`
+Get simulated sensor data for all pipes
+```json
+{
+  "pipes": [
+    {
+      "pipe_id": "P-1",
+      "pressure": 75.42,
+      "acoustic": 0.35
+    }
+  ]
+}
+```
+
+#### GET `/leaks`
+Get pipes with detected leaks (pressure < 60 psi AND acoustic > 0.7)
+```json
+{
+  "leaks": [
+    {
+      "pipe_id": "P-5",
+      "pressure": 45.23,
+      "acoustic": 0.85,
+      "leak": true
+    }
+  ]
+}
+```
+
+---
+
+## Environment Variables
+
+### Backend (`.env`)
+```env
+PORT=8000
+HOST=0.0.0.0
+```
+
+### Frontend (`.env`)
+```env
+VITE_SUPABASE_URL=your_supabase_url
+VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
+VITE_SUPABASE_PROJECT_ID=your_project_id
+```
+
+**Note**: The frontend already has a `.env` file with Supabase credentials. Update these if you're using your own Supabase instance.
+
+---
+
+## Technology Stack
+
+### Frontend
+- **Framework**: React 18 with TypeScript
+- **Build Tool**: Vite
+- **Routing**: React Router v6
+- **UI Components**: Shadcn/ui + Radix UI
+- **Styling**: Tailwind CSS
+- **State Management**: Zustand + TanStack Query
+- **Charts**: Recharts
+- **Maps**: Leaflet + React Leaflet
+- **Forms**: React Hook Form + Zod
+- **Backend**: Supabase (real-time database)
+
+### Backend
+- **Framework**: FastAPI
+- **Server**: Uvicorn
+- **Language**: Python 3.13+
+
+### Database
+- **Primary**: Supabase (PostgreSQL)
+- **Real-time**: Supabase Realtime
+
+---
+
+## Features & Pages
+
+### Landing Page (`/`)
+- System overview
+- Feature highlights
+- Team information
+- Call-to-action buttons
+
+### Authentication (`/auth`)
+- User sign-in
+- Supabase authentication
+
+### Dashboard (`/dashboard`)
+- Key metrics (Non-Revenue Water, Active Incidents, Energy Cost, Network Uptime)
+- Demand forecast chart
+- Recent events feed
+- AI agents status overview
+
+### Network Twin (`/network`)
+- Interactive map with live network visualization
+- Real-time pipe isolation updates
+- Network statistics
+- Node and edge details
+
+### Incidents (`/incidents`)
+- System events and alerts
+- Event timeline
+- Severity badges
+- Acknowledge and resolve actions
+
+### AI Agents (`/agents`)
+- Multi-agent system overview
+- Agent status and confidence levels
+- Last decisions and metrics
+- Run simulation capabilities
+
+### Energy Management (`/energy`)
+- Today's savings and efficiency metrics
+- Hourly energy pricing chart
+- Optimized pump schedule
+- Apply schedule actions
+
+### Admin (`/admin`)
+- User management
+- System configuration
+- Alert thresholds
+- Agent settings
+
+### Team (`/team`)
+- Team member profiles
+- Project information
+- Technology stack
+
+---
+
+## Development
+
+### Frontend
+
+**Lint code:**
+```bash
+cd frontend
+npm run lint
+```
+
+**Build for production:**
+```bash
+cd frontend
+npm run build
+```
+
+**Preview production build:**
+```bash
+cd frontend
+npm run preview
+```
+
+### Backend
+
+**Run with auto-reload (development):**
+```bash
+cd backend
 uvicorn main:app --reload
 ```
 
+**Run in production:**
 ```bash
-# Frontend Setup Instructions
-
-# 1. Change to the frontend directory
-cd frontend
-
-# 2. Install all required Node.js packages
-npm install
-
-# 3. Start the React development server
-npm start
+cd backend
+uvicorn main:app --host 0.0.0.0 --port 8000
 ```
 
-You can access the dashboard at [http://localhost:3000](http://localhost:3000) once the frontend is running.
+---
 
-The backend API will be available at [http://localhost:8000](http://localhost:8000) when the FastAPI server is started.
+## Wireframes
+
+Complete wireframes for all pages and components are available in [WIREFRAMES.md](./WIREFRAMES.md).
+
+The wireframes document includes:
+- All page layouts
+- Component structures
+- Data flow diagrams
+- Responsive design breakpoints
+- Accessibility guidelines
 
 ---
 
-## Project Resources
+## Database Schema
 
-| Resource          | Link                                                                                                      |
-| ----------------- | --------------------------------------------------------------------------------------------------------- |
-| Presentation Info | [Presentation Schedule & Details](https://sjsu.instructure.com/courses/1611826/discussion_topics/5664800) |
+The system uses Supabase with the following main tables:
 
-## Project Deliverables
-
-| Deliverable    | Link                                                                                          |
-| -------------- | --------------------------------------------------------------------------------------------- |
-| GitHub Code    | [GitHub Code Submission](https://sjsu.instructure.com/courses/1611826/assignments/7540441)    |
-| Live Demo      | [Live Demo Submission](https://sjsu.instructure.com/courses/1611826/assignments/7540440)      |
-| Project Report | [Project Report Submission](https://sjsu.instructure.com/courses/1611826/assignments/7540435) |
+- **events**: System incidents and alerts
+- **agents**: AI agent configurations and status
+- **nodes**: Water network nodes (junctions, tanks, reservoirs)
+- **edges**: Water network pipes/connections
+- **sensors**: Sensor readings (pressure, acoustic, flow)
+- **energy_prices**: Hourly electricity pricing data
 
 ---
 
-## Project Team
+## Troubleshooting
 
-**Team Name:** A.W.A.R.E
+### Backend Issues
 
-**Members:**
+**Problem**: `ModuleNotFoundError: No module named 'fastapi'`
+```bash
+# Make sure you're in the backend directory and virtual environment is activated
+cd backend
+source venv/bin/activate
+pip install -r requirements.txt
+```
 
-- Raymond Li
-- Sophia Atendido
-- Jack Liang
-- Dhruv Verma
+**Problem**: Port 8000 already in use
+```bash
+# Use a different port
+uvicorn main:app --reload --port 8001
+# Update frontend API calls to use the new port
+```
+
+### Frontend Issues
+
+**Problem**: `Cannot find module` errors
+```bash
+# Clear node_modules and reinstall
+cd frontend
+rm -rf node_modules package-lock.json
+npm install
+```
+
+**Problem**: Supabase connection errors
+- Check that `.env` file exists in frontend directory
+- Verify Supabase credentials are correct
+- Ensure Supabase project is running
+
+**Problem**: API calls failing
+- Ensure backend is running on port 8000
+- Check CORS settings in backend `main.py`
+- Verify API endpoint URLs in frontend code
+
+---
+
+## Testing
+
+### Test Backend Endpoints
+
+```bash
+# Health check
+curl http://localhost:8000/
+
+# Get sensor data
+curl http://localhost:8000/sensors
+
+# Get leak detections
+curl http://localhost:8000/leaks
+```
+
+### Test Frontend
+1. Open http://localhost:5173
+2. Navigate through all pages
+3. Check browser console for errors
+4. Verify real-time updates work
+
+---
+
+## Deployment
+
+### Backend Deployment
+
+Recommended platforms:
+- **Railway**: Easy Python app deployment
+- **Heroku**: Classic PaaS
+- **AWS EC2**: Full control
+- **Google Cloud Run**: Serverless containers
+
+### Frontend Deployment
+
+Recommended platforms:
+- **Vercel**: Optimized for Vite/React
+- **Netlify**: Great for static sites
+- **AWS Amplify**: Full-stack deployment
+- **Lovable.dev**: Direct deployment (if using Lovable)
+
+---
+
+## Contributing
+
+This project is part of CMPE-272 coursework at San José State University.
+
+---
+
+## License
+
+Copyright © 2025 Team A.W.A.R.E. - San José State University
+
+---
+
+## Acknowledgments
+
+- **Course**: CMPE-272: Enterprise Software Platforms
+- **Institution**: San José State University
+- **Instructor**: [Instructor Name]
+- **Semester**: Fall 2025
+
+---
+
+## Contact
+
+For questions or support, please contact:
+- Raymond Li: raymond.li@sjsu.edu
+- Sophia Atendido: sophia.atendido@sjsu.edu
+- Jack Liang: jack.liang@sjsu.edu
+- Dhruv Verma: dhruv.verma@sjsu.edu
+
+---
+
+## Project Links
+
+- **Lovable Project**: https://lovable.dev/projects/ed28f069-f536-48ea-a759-833d10bce6bf
+- **Repository**: [Your Git URL]
+- **Documentation**: See [WIREFRAMES.md](./WIREFRAMES.md) for complete UI documentation
