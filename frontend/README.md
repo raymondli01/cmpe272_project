@@ -37,8 +37,9 @@ bun install
 ```
 
 2. Configure environment variables:
-   - Copy `.env.example` to `.env`
+   - Copy `.env.example` to `.env` in the **project root directory** (not in frontend/)
    - Update with your Supabase credentials
+   - See main README.md for complete environment variable setup
 
 ## Running the Frontend
 
@@ -87,13 +88,23 @@ frontend/
 
 ## Environment Variables
 
-Create a `.env` file with:
+**Note**: Environment variables are now consolidated in a single `.env` file at the project root.
+
+Create a `.env` file in the **root directory** (not in frontend/) with:
 
 ```env
+# Frontend variables (must start with VITE_)
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
 VITE_SUPABASE_PROJECT_ID=your_project_id
+
+# Backend variables (also in same file)
+SUPABASE_URL=your_supabase_url
+SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
+OPENAI_API_KEY=your_openai_key
 ```
+
+See the main [README.md](../README.md) for complete environment variable documentation.
 
 ## Backend API Integration
 

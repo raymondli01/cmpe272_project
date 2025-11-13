@@ -6,12 +6,15 @@ Zero tolerance for safety violations - immediate alerts and recommendations.
 """
 import os
 import json
+from pathlib import Path
 from typing import Dict, List, Any, Optional
 from openai import AsyncOpenAI
 from dotenv import load_dotenv
 from .supabase_client import supabase_client
 
-load_dotenv()
+# Load .env from project root (two levels up from this file)
+ROOT_DIR = Path(__file__).parent.parent.parent
+load_dotenv(dotenv_path=ROOT_DIR / '.env')
 
 
 class SafetyMonitorAgent:

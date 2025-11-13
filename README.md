@@ -211,20 +211,47 @@ Get pipes with detected leaks (pressure < 60 psi AND acoustic > 0.7)
 
 ## Environment Variables
 
-### Backend (`.env`)
+**All environment variables are now consolidated into a single `.env` file at the project root.**
+
+### Setup
+
+1. Copy the example file:
+```bash
+cp .env.example .env
+```
+
+2. Edit `.env` and fill in your values:
 ```env
+# Supabase Configuration
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key-here
+VITE_SUPABASE_URL=https://your-project-id.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=your-anon-key-here
+VITE_SUPABASE_PROJECT_ID=your-project-id
+
+# OpenAI Configuration (for AI agents)
+OPENAI_API_KEY=your-openai-api-key-here
+
+# Backend Configuration (Optional)
 PORT=8000
 HOST=0.0.0.0
 ```
 
-### Frontend (`.env`)
-```env
-VITE_SUPABASE_URL=your_supabase_url
-VITE_SUPABASE_PUBLISHABLE_KEY=your_supabase_key
-VITE_SUPABASE_PROJECT_ID=your_project_id
-```
+### Environment Variables Explained
 
-**Note**: The frontend already has a `.env` file with Supabase credentials. Update these if you're using your own Supabase instance.
+**Backend Variables:**
+- `SUPABASE_URL` - Supabase project URL (used by backend AI agents)
+- `SUPABASE_SERVICE_ROLE_KEY` - Service role key with admin privileges (keep secret!)
+- `OPENAI_API_KEY` - OpenAI API key for AI agent functionality
+- `PORT` - Backend server port (default: 8000)
+- `HOST` - Backend server host (default: 0.0.0.0)
+
+**Frontend Variables (must start with `VITE_`):**
+- `VITE_SUPABASE_URL` - Supabase project URL (used by frontend)
+- `VITE_SUPABASE_PUBLISHABLE_KEY` - Supabase anon/public key (safe to expose)
+- `VITE_SUPABASE_PROJECT_ID` - Supabase project ID (optional, for reference)
+
+**Note**: Both backend and frontend now read from the same root `.env` file. The old separate `.env` files in `backend/` and `frontend/` directories are no longer used.
 
 ---
 
@@ -415,8 +442,9 @@ npm install
 ```
 
 **Problem**: Supabase connection errors
-- Check that `.env` file exists in frontend directory
-- Verify Supabase credentials are correct
+- Check that `.env` file exists in the **root directory** (not in backend/ or frontend/)
+- Verify Supabase credentials are correct in the root `.env` file
+- Ensure all required variables are set (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY)
 - Ensure Supabase project is running
 
 **Problem**: API calls failing

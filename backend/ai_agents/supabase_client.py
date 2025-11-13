@@ -2,11 +2,14 @@
 Supabase client helper for AI agents
 """
 import os
+from pathlib import Path
 import httpx
 from typing import Any, Dict, List, Optional
 from dotenv import load_dotenv
 
-load_dotenv()
+# Load .env from project root (two levels up from this file)
+ROOT_DIR = Path(__file__).parent.parent.parent
+load_dotenv(dotenv_path=ROOT_DIR / '.env')
 
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
