@@ -238,7 +238,7 @@ VITE_SUPABASE_PROJECT_ID=your_project_id
 - **Styling**: Tailwind CSS
 - **State Management**: Zustand + TanStack Query
 - **Charts**: Recharts
-- **Maps**: Leaflet + React Leaflet
+- **Maps**: Leaflet (vanilla implementation for React 18 compatibility)
 - **Forms**: React Hook Form + Zod
 - **Backend**: Supabase (real-time database)
 
@@ -372,6 +372,19 @@ The system uses Supabase with the following main tables:
 
 ---
 
+## Recent Updates
+
+### Network Map Component (Latest)
+The Network Twin page (`/network`) has been updated to use vanilla Leaflet instead of react-leaflet for improved React 18 compatibility. This change:
+- Eliminates React Context consumer errors
+- Provides better performance and stability
+- Maintains all existing functionality (real-time updates, node/edge visualization, popups)
+- Uses client-side only rendering to avoid SSR issues
+
+The map component (`/components/NetworkMap.tsx`) dynamically loads Leaflet on the client side and manages the map lifecycle using React refs and useEffect hooks.
+
+---
+
 ## Troubleshooting
 
 ### Backend Issues
@@ -410,6 +423,12 @@ npm install
 - Ensure backend is running on port 8000
 - Check CORS settings in backend `main.py`
 - Verify API endpoint URLs in frontend code
+
+**Problem**: Map not loading or React errors on Network page
+- The map uses vanilla Leaflet (not react-leaflet) for React 18 compatibility
+- Ensure Leaflet CSS is properly imported
+- Check browser console for any Leaflet-specific errors
+- Verify that the map container has proper dimensions (height: 600px)
 
 ---
 

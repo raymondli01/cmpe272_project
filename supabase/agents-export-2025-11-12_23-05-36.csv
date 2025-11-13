@@ -1,4 +1,0 @@
-id;name;role;status;last_decision;confidence;metrics;created_at;updated_at
-581cd3d8-8d98-4fd5-b61e-4cd55ed56851;Leak Preemption Agent;leak-preempt;enabled;Monitoring acoustic patterns on P5;0.87;"{""avg_response_time_min"":4.2,""detected_leaks"":3,""false_positives"":1}";2025-11-12 21:39:49.897586+00;2025-11-12 21:39:49.897586+00
-03a01748-399f-4660-ad24-b13e9a136788;Energy Optimizer;energy-optimizer;enabled;Scheduled pump for off-peak hours;0.92;"{""efficiency_gain"":18.5,""savings_today"":142.5}";2025-11-12 21:39:49.897586+00;2025-11-12 21:39:49.897586+00
-8edf54cd-549d-4a80-8441-b11b7bd2238c;Safety Monitor;safety;enabled;All systems nominal;0.98;"{""pressure_violations"":0,""quality_checks"":847}";2025-11-12 21:39:49.897586+00;2025-11-12 21:39:49.897586+00

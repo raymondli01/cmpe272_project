@@ -1,12 +1,32 @@
-import { useQuery } from '@tanstack/react-query';
+import { useState } from 'react';
+import { useQuery, useMutation } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { Bot, Play } from 'lucide-react';
+import { Bot, Play, Loader2, AlertTriangle, CheckCircle, Info } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Separator } from '@/components/ui/separator';
+import { ScrollArea } from '@/components/ui/scroll-area';
+
+interface AgentResult {
+  status: string;
+  [key: string]: any;
+}
 
 const Agents = () => {
+  const [selectedAgent, setSelectedAgent] = useState<string | null>(null);
+  const [agentResult, setAgentResult] = useState<AgentResult | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
   const { data: agents } = useQuery({
     queryKey: ['agents'],
     queryFn: async () => {
@@ -15,10 +35,44 @@ const Agents = () => {
     },
   });
 
+  const runAgentMutation = useMutation({
+    mutationFn: async (agentName: string) => {
+      // Map agent names to API endpoints
+      const endpointMap: Record<string, string> = {
+        'Leak Preemption Agent': '/ai/leak-detection',
+        'Energy Optimizer Agent': '/ai/energy-optimization',
+        'Safety Monitor Agent': '/ai/safety-monitoring',
+      };
+
+      const endpoint = endpointMap[agentName] || '/ai/analyze';
+      const response = await fetch(`http://localhost:8000${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to run agent');
+      }
+
+      return response.json();
+    },
+    onSuccess: (data, agentName) => {
+      setAgentResult(data);
+      setSelectedAgent(agentName);
+      setIsDialogOpen(true);
+      toast.success(`${agentName} completed analysis`, {
+        description: 'View results in the dialog',
+      });
+    },
+    onError: (error, agentName) => {
+      toast.error(`Failed to run ${agentName}`, {
+        description: error instanceof Error ? error.message : 'Unknown error',
+      });
+    },
+  });
+
   const runSimulation = (agentName: string) => {
-    toast.success(`Running simulation for ${agentName}`, {
-      description: 'Analyzing current network state and generating recommendations...',
-    });
+    runAgentMutation.mutate(agentName);
   };
 
   return (
@@ -83,14 +137,195 @@ const Agents = () => {
                 variant="outline"
                 className="w-full gap-2"
                 onClick={() => runSimulation(agent.name)}
+                disabled={runAgentMutation.isPending}
               >
-                <Play className="w-4 h-4" />
-                Run Simulation
+                {runAgentMutation.isPending ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Analyzing...
+                  </>
+                ) : (
+                  <>
+                    <Play className="w-4 h-4" />
+                    Run Analysis
+                  </>
+                )}
               </Button>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {/* Results Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Bot className="w-5 h-5" />
+              {selectedAgent} Results
+            </DialogTitle>
+            <DialogDescription>
+              AI-generated analysis with reasoning and recommendations
+            </DialogDescription>
+          </DialogHeader>
+
+          <ScrollArea className="flex-1 pr-4">
+            <div className="space-y-6">
+              {/* Status */}
+              {agentResult && (
+                <Alert>
+                  <CheckCircle className="h-4 w-4" />
+                  <AlertTitle>Analysis Complete</AlertTitle>
+                  <AlertDescription>
+                    Status: {agentResult.status}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {/* Leak Detection Results */}
+              {agentResult?.leaks_detected && (
+                <div className="space-y-4">
+                  <h3 className="font-semibold text-lg">Leaks Detected ({agentResult.leaks_detected.length})</h3>
+                  {agentResult.leaks_detected.length === 0 ? (
+                    <Alert>
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                      <AlertTitle>No Leaks Detected</AlertTitle>
+                      <AlertDescription>All pipes are operating normally</AlertDescription>
+                    </Alert>
+                  ) : (
+                    agentResult.leaks_detected.map((leak: any, idx: number) => (
+                      <Card key={idx} className="border-orange-200">
+                        <CardHeader>
+                          <div className="flex items-center justify-between">
+                            <CardTitle className="text-base">Pipe: {leak.edge_id}</CardTitle>
+                            <div className="flex gap-2">
+                              <Badge variant={leak.urgency === 'immediate' ? 'destructive' : 'secondary'}>
+                                {leak.urgency}
+                              </Badge>
+                              <Badge>{(leak.confidence * 100).toFixed(0)}% confidence</Badge>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="space-y-3">
+                          <div>
+                            <p className="text-sm font-medium mb-1">Reasoning:</p>
+                            <p className="text-sm text-muted-foreground">{leak.reasoning}</p>
+                          </div>
+                          {leak.recommendation && (
+                            <div>
+                              <p className="text-sm font-medium mb-1">Recommendation:</p>
+                              <p className="text-sm text-muted-foreground">
+                                Action: {leak.recommendation.action}
+                                {leak.recommendation.valves_to_close && (
+                                  <> - Close valves: {leak.recommendation.valves_to_close.join(', ')}</>
+                                )}
+                              </p>
+                            </div>
+                          )}
+                        </CardContent>
+                      </Card>
+                    ))
+                  )}
+                </div>
+              )}
+
+              {/* Safety Monitoring Results */}
+              {agentResult?.safety_status && (
+                <div className="space-y-4">
+                  <Alert variant={agentResult.safety_status === 'CRITICAL' ? 'destructive' : 'default'}>
+                    {agentResult.safety_status === 'SAFE' ? (
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    ) : (
+                      <AlertTriangle className="h-4 w-4" />
+                    )}
+                    <AlertTitle>Safety Status: {agentResult.safety_status}</AlertTitle>
+                    <AlertDescription>{agentResult.overall_assessment}</AlertDescription>
+                  </Alert>
+
+                  {agentResult.issues && agentResult.issues.length > 0 && (
+                    <div>
+                      <h3 className="font-semibold text-lg mb-2">Safety Issues ({agentResult.issues.length})</h3>
+                      {agentResult.issues.map((issue: any, idx: number) => (
+                        <Card key={idx} className="mb-3">
+                          <CardHeader>
+                            <div className="flex items-center justify-between">
+                              <CardTitle className="text-base">{issue.category}</CardTitle>
+                              <Badge variant={issue.severity === 'CRITICAL' ? 'destructive' : 'secondary'}>
+                                {issue.severity}
+                              </Badge>
+                            </div>
+                          </CardHeader>
+                          <CardContent className="space-y-2">
+                            <p className="text-sm text-muted-foreground">{issue.reasoning}</p>
+                            {issue.immediate_actions && (
+                              <div>
+                                <p className="text-sm font-medium">Immediate Actions:</p>
+                                <ul className="list-disc list-inside text-sm text-muted-foreground">
+                                  {issue.immediate_actions.map((action: string, i: number) => (
+                                    <li key={i}>{action}</li>
+                                  ))}
+                                </ul>
+                              </div>
+                            )}
+                          </CardContent>
+                        </Card>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Energy Optimization Results */}
+              {agentResult?.optimizations && (
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h3 className="font-semibold text-lg">Energy Optimization</h3>
+                    {agentResult.total_estimated_savings && (
+                      <Badge variant="secondary" className="text-green-600">
+                        Save ${agentResult.total_estimated_savings}/day
+                      </Badge>
+                    )}
+                  </div>
+
+                  {agentResult.overall_strategy && (
+                    <Alert>
+                      <Info className="h-4 w-4" />
+                      <AlertTitle>Strategy</AlertTitle>
+                      <AlertDescription>{agentResult.overall_strategy}</AlertDescription>
+                    </Alert>
+                  )}
+
+                  {agentResult.optimizations.map((opt: any, idx: number) => (
+                    <Card key={idx}>
+                      <CardHeader>
+                        <CardTitle className="text-base">{opt.pump_name}</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-3">
+                        <p className="text-sm text-muted-foreground">{opt.reasoning}</p>
+                        {opt.estimated_daily_savings_usd && (
+                          <p className="text-sm font-medium text-green-600">
+                            Estimated savings: ${opt.estimated_daily_savings_usd}/day
+                          </p>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
+              )}
+
+              {/* Raw JSON for debugging */}
+              <details className="text-xs">
+                <summary className="cursor-pointer text-muted-foreground hover:text-foreground">
+                  View Raw Response
+                </summary>
+                <pre className="mt-2 p-4 bg-muted rounded-lg overflow-x-auto">
+                  {JSON.stringify(agentResult, null, 2)}
+                </pre>
+              </details>
+            </div>
+          </ScrollArea>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

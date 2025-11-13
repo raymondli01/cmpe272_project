@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { MapContainer, TileLayer, Circle, Polyline, Popup } from 'react-leaflet';
 import { supabase } from '@/integrations/supabase/client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import 'leaflet/dist/leaflet.css';
 import { toast } from 'sonner';
+import NetworkMap from '@/components/NetworkMap';
 
 interface Node {
   id: string;
@@ -27,6 +26,7 @@ interface Edge {
 const Network = () => {
   const [center] = useState<[number, number]>([37.3365, -121.8815]);
   const [isolatedEdges, setIsolatedEdges] = useState<Set<string>>(new Set());
+  const [isMounted, setIsMounted] = useState(false);
 
   const { data: nodes } = useQuery({
     queryKey: ['nodes'],
@@ -47,6 +47,12 @@ const Network = () => {
   });
 
   useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted) return;
+
     const channel = supabase
       .channel('network-changes')
       .on(
@@ -71,7 +77,7 @@ const Network = () => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [isMounted]);
 
   const getNodePosition = (nodeId: string): [number, number] | null => {
     const node = nodes?.find(n => n.id === nodeId);
@@ -100,74 +106,21 @@ const Network = () => {
         </CardHeader>
         <CardContent>
           <div className="rounded-lg overflow-hidden border border-border" style={{ height: '600px' }}>
-            <MapContainer
-              center={center}
-              zoom={16}
-              style={{ height: '100%', width: '100%' }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            {isMounted && (
+              <NetworkMap
+                center={center}
+                nodes={nodes}
+                edges={edges}
+                isolatedEdges={isolatedEdges}
+                getNodePosition={getNodePosition}
+                getEdgeColor={getEdgeColor}
               />
-              
-              {nodes?.map((node) => (
-                <Circle
-                  key={node.id}
-                  center={[node.x, node.y]}
-                  radius={20}
-                  pathOptions={{
-                    fillColor: node.type === 'tank' ? '#22c55e' : 
-                               node.type === 'reservoir' ? '#0ea5e9' : '#f59e0b',
-                    fillOpacity: 0.8,
-                    color: '#fff',
-                    weight: 2,
-                  }}
-                >
-                  <Popup>
-                    <div className="p-2">
-                      <p className="font-semibold">{node.name}</p>
-                      <Badge variant="outline" className="mt-1">{node.type}</Badge>
-                      {node.pressure && (
-                        <p className="text-sm mt-2">
-                          Pressure: {node.pressure.toFixed(1)} psi
-                        </p>
-                      )}
-                    </div>
-                  </Popup>
-                </Circle>
-              ))}
-
-              {edges?.map((edge) => {
-                const from = getNodePosition(edge.from_node_id);
-                const to = getNodePosition(edge.to_node_id);
-                if (!from || !to) return null;
-
-                return (
-                  <Polyline
-                    key={edge.id}
-                    positions={[from, to]}
-                    pathOptions={{
-                      color: getEdgeColor(edge),
-                      weight: 4,
-                      opacity: 0.8,
-                      dashArray: edge.status === 'isolated' ? '10, 10' : undefined,
-                    }}
-                  >
-                    <Popup>
-                      <div className="p-2">
-                        <p className="font-semibold">{edge.name}</p>
-                        <Badge 
-                          variant={edge.status === 'isolated' ? 'destructive' : 'default'}
-                          className="mt-1"
-                        >
-                          {edge.status}
-                        </Badge>
-                      </div>
-                    </Popup>
-                  </Polyline>
-                );
-              })}
-            </MapContainer>
+            )}
+            {!isMounted && (
+              <div className="h-full w-full flex items-center justify-center bg-muted">
+                <p className="text-muted-foreground">Loading map...</p>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
