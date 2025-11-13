@@ -74,14 +74,37 @@ aware-water-agent/
 
 ## Quick Start
 
-### 1. Clone the Repository
+### Option 1: Automated Startup (Recommended)
+
+The easiest way to start both backend and frontend:
+
+```bash
+# From the project root directory
+./start-services.sh
+```
+
+This script will:
+- Automatically kill any existing processes on ports 8000 and 5173
+- Start the backend on http://localhost:8000
+- Start the frontend on http://localhost:5173
+- Handle environment variable configuration
+
+To stop all services:
+
+```bash
+./stop-services.sh
+```
+
+### Option 2: Manual Startup
+
+#### 1. Clone the Repository
 
 ```bash
 git clone <repository-url>
 cd aware-water-agent
 ```
 
-### 2. Start the Backend
+#### 2. Start the Backend
 
 ```bash
 # Navigate to backend directory
