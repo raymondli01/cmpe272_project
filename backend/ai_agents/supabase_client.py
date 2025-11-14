@@ -84,6 +84,23 @@ class SupabaseClient:
             response.raise_for_status()
             return response.json()
 
+    async def delete(self, table: str, **filters) -> List[Dict[str, Any]]:
+        """
+        Delete data from a Supabase table
+
+        Args:
+            table: Table name
+            **filters: Query filters (e.g., id="eq.123")
+        """
+        url = f"{self.url}/rest/v1/{table}"
+
+        async with httpx.AsyncClient() as client:
+            response = await client.delete(
+                url, headers=self.headers, params=filters
+            )
+            response.raise_for_status()
+            return response.json()
+
     async def get_sensors_with_assets(self) -> List[Dict[str, Any]]:
         """Get all sensors with their associated asset information"""
         sensors = await self.query(

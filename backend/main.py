@@ -142,3 +142,131 @@ async def generate_analytics():
         return result
     except Exception as e:
         return {"status": "error", "error": str(e)}
+
+
+# ========== NETWORK TOPOLOGY ENDPOINTS ==========
+
+@app.get("/network/topology")
+async def get_network_topology():
+    """
+    Get complete network topology with status based on SENSOR DATA for map visualization.
+    Map colors are determined by sensor readings, not incidents.
+    Incidents are included for reference but don't affect map colors.
+    """
+    try:
+        # Fetch nodes and edges
+        nodes = await supabase_client.query("nodes", select="*")
+        edges = await supabase_client.query("edges", select="*")
+
+        # Fetch all sensors
+        sensors = await supabase_client.get_sensors_with_assets()
+
+        # Group sensors by edge_id
+        edge_sensors = {}
+        for sensor in sensors:
+            if sensor["asset_type"] == "edge":
+                edge_id = sensor["asset_id"]
+                if edge_id not in edge_sensors:
+                    edge_sensors[edge_id] = []
+                edge_sensors[edge_id].append(sensor)
+
+        # Fetch all incidents linked to edges (for reference only)
+        incidents = await supabase_client.query(
+            "events",
+            select="id,title,asset_ref,asset_type,state,severity,priority,confidence,detected_by,created_at",
+            asset_type="eq.edge"
+        )
+
+        # Create incident map by edge_id
+        incident_map = {}
+        for incident in incidents:
+            edge_id = incident.get("asset_ref")
+            if edge_id:
+                if edge_id not in incident_map:
+                    incident_map[edge_id] = []
+                incident_map[edge_id].append(incident)
+
+        # Enhance edges with sensor-based status
+        enhanced_edges = []
+        leak_indicator_count = 0
+
+        for edge in edges:
+            edge_id = edge["id"]
+            edge_incidents = incident_map.get(edge_id, [])
+            sensors_list = edge_sensors.get(edge_id, [])
+
+            # Analyze sensors to determine status
+            pressure = None
+            acoustic = None
+            flow = None
+
+            for sensor in sensors_list:
+                if sensor["type"] == "pressure":
+                    pressure = sensor["value"]
+                elif sensor["type"] == "acoustic":
+                    acoustic = sensor["value"]
+                elif sensor["type"] == "flow":
+                    flow = sensor["value"]
+
+            # Determine leak indicators from sensor data
+            leak_indicators = []
+            if pressure is not None and pressure < 55:
+                leak_indicators.append("LOW_PRESSURE")
+            if acoustic is not None and acoustic > 5:
+                leak_indicators.append("HIGH_ACOUSTIC")
+            if flow is not None and flow > 110:
+                leak_indicators.append("HIGH_FLOW")
+
+            # Determine edge status based on sensor data
+            if len(leak_indicators) >= 3:
+                edge_status = "critical"  # All 3 indicators
+            elif len(leak_indicators) >= 2:
+                edge_status = "high"  # 2 indicators
+            elif len(leak_indicators) >= 1:
+                edge_status = "medium"  # 1 indicator
+            else:
+                edge_status = "normal"
+
+            if len(leak_indicators) > 0:
+                leak_indicator_count += 1
+
+            # Filter active incidents (not resolved)
+            active_incidents = [inc for inc in edge_incidents if inc["state"] != "resolved"]
+
+            # Get highest priority incident (for reference)
+            highest_priority_incident = None
+            if active_incidents:
+                highest_priority_incident = max(
+                    active_incidents,
+                    key=lambda x: x.get("priority", 0)
+                )
+
+            enhanced_edges.append({
+                **edge,
+                "status": edge_status,  # Based on SENSOR DATA
+                "leak_indicators": leak_indicators,
+                "sensor_data": {
+                    "pressure": pressure,
+                    "acoustic": acoustic,
+                    "flow": flow
+                },
+                "active_incident_count": len(active_incidents),
+                "total_incident_count": len(edge_incidents),
+                "highest_priority_incident": highest_priority_incident,
+                "all_incidents": edge_incidents
+            })
+
+        return {
+            "nodes": nodes,
+            "edges": enhanced_edges,
+            "incident_summary": {
+                "total_edges": len(edges),
+                "edges_with_leak_indicators": leak_indicator_count,
+                "edges_with_active_incidents": len([e for e in enhanced_edges if e["active_incident_count"] > 0]),
+                "total_active_incidents": sum(e["active_incident_count"] for e in enhanced_edges),
+                "critical_edges": len([e for e in enhanced_edges if e["status"] == "critical"]),
+                "high_severity_edges": len([e for e in enhanced_edges if e["status"] == "high"]),
+            }
+        }
+    except Exception as e:
+        return {"status": "error", "error": str(e), "nodes": [], "edges": []}

@@ -167,7 +167,7 @@ const Agents = () => {
 
       {/* Results Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-hidden flex flex-col">
+        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto flex flex-col">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
@@ -178,7 +178,7 @@ const Agents = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 pr-4">
+          <ScrollArea className="flex-1 pr-4 max-h-[60vh]">
             <div className="space-y-6">
               {/* Status Alert */}
               {agentResult?.status && (
@@ -212,7 +212,7 @@ const Agents = () => {
                       <Card key={idx} className="border-orange-200">
                         <CardHeader>
                           <div className="flex items-center justify-between">
-                            <CardTitle className="text-base">Pipe: {leak.edge_id}</CardTitle>
+                            <CardTitle className="text-base font-mono">Pipe: {leak.edge_name || leak.edge_id}</CardTitle>
                             <div className="flex gap-2">
                               <Badge variant={leak.urgency === 'immediate' ? 'destructive' : 'secondary'}>
                                 {leak.urgency}

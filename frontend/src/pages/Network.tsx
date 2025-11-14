@@ -21,6 +21,8 @@ interface Edge {
   status: string;
   from_node_id: string;
   to_node_id: string;
+  active_incident_count?: number;
+  highest_priority_incident?: any;
 }
 
 const Network = () => {
@@ -28,23 +30,19 @@ const Network = () => {
   const [isolatedEdges, setIsolatedEdges] = useState<Set<string>>(new Set());
   const [isMounted, setIsMounted] = useState(false);
 
-  const { data: nodes } = useQuery({
-    queryKey: ['nodes'],
+  // Fetch network topology with incident status from backend API
+  const { data: topology } = useQuery({
+    queryKey: ['network-topology'],
     queryFn: async () => {
-      const { data } = await supabase.from('nodes').select('*');
-      return data as Node[] || [];
+      const response = await fetch('http://localhost:8000/network/topology');
+      const data = await response.json();
+      return data;
     },
+    refetchInterval: 30000, // Refetch every 30 seconds for real-time updates
   });
 
-  const { data: edges } = useQuery({
-    queryKey: ['edges'],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from('edges')
-        .select('*');
-      return data as Edge[] || [];
-    },
-  });
+  const nodes = topology?.nodes as Node[] || [];
+  const edges = topology?.edges as Edge[] || [];
 
   useEffect(() => {
     setIsMounted(true);
@@ -85,9 +83,18 @@ const Network = () => {
   };
 
   const getEdgeColor = (edge: Edge) => {
+    // Check for manual isolation first
     if (edge.status === 'isolated' || isolatedEdges.has(edge.id)) return '#ef4444';
     if (edge.status === 'closed') return '#6b7280';
-    return '#0ea5e9';
+
+    // Color based on incident severity (from API)
+    const edgeData = edge as any; // Has additional fields from topology API
+    if (edgeData.status === 'critical') return '#dc2626'; // Red - critical incident
+    if (edgeData.status === 'high') return '#ea580c'; // Orange - high severity
+    if (edgeData.status === 'medium') return '#ca8a04'; // Yellow - medium severity
+    if (edgeData.status === 'low') return '#65a30d'; // Light green - low severity
+
+    return '#0ea5e9'; // Blue - normal (no incidents)
   };
 
   return (
@@ -128,24 +135,28 @@ const Network = () => {
       <div className="grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">Legend</CardTitle>
+            <CardTitle className="text-lg">Pipe Status Legend</CardTitle>
           </CardHeader>
           <CardContent className="space-y-2">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 rounded-full bg-[#0ea5e9]" />
-              <span className="text-sm">Open Pipe</span>
+              <span className="text-sm">Normal (No Incidents)</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-[#ef4444]" />
-              <span className="text-sm">Isolated Pipe</span>
+              <div className="w-4 h-4 rounded-full bg-[#dc2626]" />
+              <span className="text-sm">Critical Incident</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-[#f59e0b]" />
-              <span className="text-sm">Junction</span>
+              <div className="w-4 h-4 rounded-full bg-[#ea580c]" />
+              <span className="text-sm">High Severity</span>
             </div>
             <div className="flex items-center gap-2">
-              <div className="w-4 h-4 rounded-full bg-[#22c55e]" />
-              <span className="text-sm">Tank</span>
+              <div className="w-4 h-4 rounded-full bg-[#ca8a04]" />
+              <span className="text-sm">Medium Severity</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-4 h-4 rounded-full bg-[#65a30d]" />
+              <span className="text-sm">Low Severity</span>
             </div>
           </CardContent>
         </Card>
@@ -164,9 +175,15 @@ const Network = () => {
               <span className="font-medium">{edges?.length || 0}</span>
             </div>
             <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground">Isolated:</span>
+              <span className="text-muted-foreground">Active Incidents:</span>
               <span className="font-medium text-destructive">
-                {edges?.filter(e => e.status === 'isolated').length || 0}
+                {topology?.incident_summary?.total_active_incidents || 0}
+              </span>
+            </div>
+            <div className="flex justify-between text-sm">
+              <span className="text-muted-foreground">Pipes Affected:</span>
+              <span className="font-medium text-orange-600">
+                {topology?.incident_summary?.edges_with_active_incidents || 0}
               </span>
             </div>
           </CardContent>
