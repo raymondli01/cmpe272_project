@@ -530,7 +530,7 @@ For questions or support, please contact:
 - Raymond Li: raymond.li@sjsu.edu
 - Sophia Atendido: sophia.atendido@sjsu.edu
 - Jack Liang: jack.liang@sjsu.edu
-- Dhruv Verma: dhruv.verma@sjsu.edu
+- Dhruv Verma: dhruv.verma01@sjsu.edu
 
 ---
 
