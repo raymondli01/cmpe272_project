@@ -9,7 +9,7 @@ A proactive, self-healing AI agent for municipal water utilities that couples a 
 - **Raymond Li** - raymond.li@sjsu.edu
 - **Sophia Atendido** - sophia.atendido@sjsu.edu
 - **Jack Liang** - jack.liang@sjsu.edu
-- **Dhruv Verma** - dhruv.verma@sjsu.edu
+- **Dhruv Verma** - dhruv.verma01@sjsu.edu
 
 **Course**: CMPE-272: Enterprise Software Platforms | SJSU Fall 2025
 
