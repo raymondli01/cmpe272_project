@@ -536,6 +536,5 @@ For questions or support, please contact:
 
 ## Project Links
 
-- **Lovable Project**: https://lovable.dev/projects/ed28f069-f536-48ea-a759-833d10bce6bf
-- **Repository**: [Your Git URL]
+- **Repository**: https://github.com/raymondli01/aware-water-agent
 - **Documentation**: See [WIREFRAMES.md](./WIREFRAMES.md) for complete UI documentation

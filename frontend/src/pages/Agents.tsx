@@ -167,8 +167,8 @@ const Agents = () => {
 
       {/* Results Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto flex flex-col">
-          <DialogHeader>
+        <DialogContent className="max-w-4xl max-h-[85vh] flex flex-col">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="flex items-center gap-2">
               <Bot className="w-5 h-5" />
               {selectedAgent} Results
@@ -178,8 +178,8 @@ const Agents = () => {
             </DialogDescription>
           </DialogHeader>
 
-          <ScrollArea className="flex-1 pr-4 max-h-[60vh]">
-            <div className="space-y-6">
+          <ScrollArea className="flex-1 pr-4 overflow-y-auto" style={{ maxHeight: 'calc(85vh - 120px)' }}>
+            <div className="space-y-6 pb-4">
               {/* Status Alert */}
               {agentResult?.status && (
                 <Alert variant={agentResult.status === 'success' ? 'default' : 'destructive'}>

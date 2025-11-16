@@ -52,6 +52,7 @@ const Incidents = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['events'] });
+      queryClient.invalidateQueries({ queryKey: ['network-topology'] });
       toast.success('Event status updated');
     },
     onError: (error: any) => {

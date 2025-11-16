@@ -16,6 +16,7 @@ interface Edge {
   status: string;
   from_node_id: string;
   to_node_id: string;
+  has_acknowledged_incidents?: boolean;
 }
 
 interface NetworkMapProps {
@@ -136,7 +137,9 @@ const NetworkMap = ({ center, nodes, edges, isolatedEdges, getNodePosition, getE
       if (!from || !to) return;
 
       const color = getEdgeColor(edge);
-      const dashArray = edge.status === 'isolated' ? '10, 10' : undefined;
+      // Use dashed line for isolated edges or acknowledged incidents
+      const edgeData = edge as any; // Has additional fields from topology API
+      const dashArray = (edge.status === 'isolated' || edgeData.has_acknowledged_incidents) ? '10, 10' : undefined;
 
       const polyline = L.polyline([from, to], {
         color,

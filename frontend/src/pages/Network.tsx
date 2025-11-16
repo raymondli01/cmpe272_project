@@ -23,6 +23,8 @@ interface Edge {
   to_node_id: string;
   active_incident_count?: number;
   highest_priority_incident?: any;
+  has_open_incidents?: boolean;
+  has_acknowledged_incidents?: boolean;
 }
 
 const Network = () => {
@@ -87,8 +89,18 @@ const Network = () => {
     if (edge.status === 'isolated' || isolatedEdges.has(edge.id)) return '#ef4444';
     if (edge.status === 'closed') return '#6b7280';
 
-    // Color based on incident severity (from API)
+    // Check for incident states (acknowledged or open incidents show as red)
     const edgeData = edge as any; // Has additional fields from topology API
+    if (edgeData.has_acknowledged_incidents || edgeData.has_open_incidents) {
+      return '#dc2626'; // Red - has active incidents (acknowledged or open)
+    }
+
+    // If no active incidents, return blue (normal/resolved)
+    if (edgeData.active_incident_count === 0) {
+      return '#0ea5e9'; // Blue - normal (no active incidents)
+    }
+
+    // Color based on incident severity (from API) - fallback for other cases
     if (edgeData.status === 'critical') return '#dc2626'; // Red - critical incident
     if (edgeData.status === 'high') return '#ea580c'; // Orange - high severity
     if (edgeData.status === 'medium') return '#ca8a04'; // Yellow - medium severity
