@@ -31,3 +31,7 @@ dist-ssr
 # Migration scripts with hardcoded credentials
 run_migration.py
 run_migration.sh
+raymond_accessKeys.csv
+*.csv
+aws-config.json
+.env

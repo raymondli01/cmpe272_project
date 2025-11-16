@@ -6,9 +6,17 @@ from ai_agents.supabase_client import supabase_client
 app = fastapi.FastAPI(title="AWARE Water Management System API")
 
 # Middleware Configuration
+import os
+
+# Get allowed origins from environment variable or use defaults
+ALLOWED_ORIGINS = os.getenv(
+    "ALLOWED_ORIGINS",
+    "http://localhost:5173,http://localhost:3000"
+).split(",")
+
 app.add_middleware(
     fastapi.middleware.cors.CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://localhost:3000"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -33,10 +33,11 @@ const Network = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   // Fetch network topology with incident status from backend API
+  const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
   const { data: topology } = useQuery({
     queryKey: ['network-topology'],
     queryFn: async () => {
-      const response = await fetch('http://localhost:8000/network/topology');
+      const response = await fetch(`${API_URL}/network/topology`);
       const data = await response.json();
       return data;
     },

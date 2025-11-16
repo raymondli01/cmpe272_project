@@ -1,0 +1,15 @@
+{
+  "region": "us-east-1",
+  "accountId": "623677486066",
+  "clusterName": "aware-water-cluster",
+  "backendRepo": "aware-water-backend",
+  "frontendRepo": "aware-water-frontend",
+  "backendEcrUri": "623677486066.dkr.ecr.us-east-1.amazonaws.com/aware-water-backend",
+  "frontendEcrUri": "623677486066.dkr.ecr.us-east-1.amazonaws.com/aware-water-frontend",
+  "vpcId": "vpc-013c4c17cbbf85c7f",
+  "subnetIds": "subnet-0ab88493c8ff846e8,subnet-0153107a600cbd73b,subnet-08a2c3cc9b070d630,subnet-0e36c872982b10a30,subnet-0f6fcaff6d126b3f3,subnet-06bc4ebfd6e7820ba",
+  "albSecurityGroupId": "sg-05cd3f7cfba2a1128",
+  "ecsSecurityGroupId": "sg-046ee4b01c1fa6cd4",
+  "albArn": "arn:aws:elasticloadbalancing:us-east-1:623677486066:loadbalancer/app/aware-water-alb/208c4143577b3645",
+  "albDns": "aware-water-alb-1513973059.us-east-1.elb.amazonaws.com"
+}
