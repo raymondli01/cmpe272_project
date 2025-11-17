@@ -278,8 +278,8 @@ Phase 1 is complete when:
 - [x] Explainability panel shows AI reasoning
 - [x] Explainability panel shows recommendations
 - [x] Incidents sorted by priority (highest first)
-- [ ] **YOU VERIFY**: Run migration in Supabase ← DO THIS NEXT
-- [ ] **YOU VERIFY**: Test leak detection end-to-end ← THEN THIS
+- [x] **YOU VERIFY**: Run migration in Supabase ← DO THIS NEXT
+- [x] **YOU VERIFY**: Test leak detection end-to-end ← THEN THIS
 
 ---
 
@@ -301,5 +301,3 @@ After you verify Phase 1 works:
    - Factor in number of customers affected
    - Factor in estimated water loss (gallons/minute)
    - Factor in safety risk (proximity to critical infrastructure)
-
-Let me know when you're ready for Phase 2! 🎉
