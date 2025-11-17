@@ -2,7 +2,7 @@
 
 ## What Was Implemented
 
-I've created a **fully integrated system** where the map, incidents, and AI agents all work together dynamically.
+A **fully integrated system** where the map, incidents, and AI agents all work together dynamically.
 
 ### The Flow
 
