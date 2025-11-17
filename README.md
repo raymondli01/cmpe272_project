@@ -499,7 +499,6 @@ Recommended platforms:
 - **Vercel**: Optimized for Vite/React
 - **Netlify**: Great for static sites
 - **AWS Amplify**: Full-stack deployment
-- **Lovable.dev**: Direct deployment (if using Lovable)
 
 ---
 
@@ -527,10 +526,10 @@ Copyright © 2025 Team A.W.A.R.E. - San José State University
 ## Contact
 
 For questions or support, please contact:
-- Raymond Li: raymond.li@sjsu.edu
+- Raymond Li: raymond.li01@sjsu.edu
 - Sophia Atendido: sophia.atendido@sjsu.edu
 - Jack Liang: jack.liang@sjsu.edu
-- Dhruv Verma: dhruv.verma@sjsu.edu
+- Dhruv Verma: dhruv.verma01@sjsu.edu
 
 ---
 
