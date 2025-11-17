@@ -202,7 +202,7 @@ Running Energy Optimizer (~$0.02-0.03 per run)
 
 ## 🎊 Congratulations!
 
-Your app is now **100% AI-driven** with:
+App is now **100% AI-driven** with:
 - Zero hardcoded metrics
 - Real-time AI-generated analytics
 - OpenAI-powered decision making
