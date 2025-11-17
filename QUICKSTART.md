@@ -156,7 +156,7 @@ npm install
 ## Contact
 
 Team A.W.A.R.E.:
-- Raymond Li: raymond.li@sjsu.edu
+- Raymond Li: raymond.li01@sjsu.edu
 - Sophia Atendido: sophia.atendido@sjsu.edu
 - Jack Liang: jack.liang@sjsu.edu
-- Dhruv Verma: dhruv.verma@sjsu.edu
+- Dhruv Verma: dhruv.verma01@sjsu.edu
