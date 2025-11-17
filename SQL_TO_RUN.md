@@ -54,7 +54,7 @@ You should see a response like:
 
 ## That's It!
 
-The database is now ready. Next, I'll update the frontend to fetch from these tables instead of using hardcoded values.
+The database is now ready. 
 
 ## Troubleshooting
 
