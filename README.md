@@ -4,7 +4,33 @@
 
 A proactive, self-healing AI agent for municipal water utilities that couples a digital twin with multi-agent decision systems to anticipate failures, orchestrate autonomous responses, and optimize energy use.
 
-## Team
+## Table of Contents
+
+- [Team & Contact](#team--contact)
+- [Project Overview](#project-overview)
+- [Architecture](#architecture)
+- [Prerequisites](#prerequisites)
+- [Quick Start](#quick-start)
+- [Running Both Services](#running-both-services)
+- [API Endpoints](#api-endpoints)
+- [Environment Variables](#environment-variables)
+- [Technology Stack](#technology-stack)
+- [Features & Pages](#features--pages)
+- [Development](#development)
+- [Wireframes](#wireframes)
+- [Database Schema](#database-schema)
+- [Recent Updates](#recent-updates)
+- [Troubleshooting](#troubleshooting)
+- [Testing](#testing)
+- [Deployment](#deployment)
+- [Contributing](#contributing)
+- [License](#license)
+- [Acknowledgments](#acknowledgments)
+- [Project Links](#project-links)
+
+---
+
+## Team & Contact
 
 - **Raymond Li** - raymond.li01@sjsu.edu
 - **Sophia Atendido** - sophia.atendido@sjsu.edu
@@ -12,6 +38,8 @@ A proactive, self-healing AI agent for municipal water utilities that couples a 
 - **Dhruv Verma** - dhruv.verma01@sjsu.edu
 
 **Course**: CMPE-272: Enterprise Software Platforms | SJSU Fall 2025
+
+For questions or support, please contact any team member at the emails above.
 
 ---
 
@@ -63,10 +91,12 @@ aware-water-agent/
 ## Prerequisites
 
 ### Backend
+
 - Python 3.8 or higher
 - pip (Python package manager)
 
 ### Frontend
+
 - Node.js 18 or higher
 - npm (comes with Node.js)
 
@@ -84,6 +114,7 @@ The easiest way to start both backend and frontend:
 ```
 
 This script will:
+
 - Automatically kill any existing processes on ports 8000 and 5173
 - Start the backend on http://localhost:8000
 - Start the frontend on http://localhost:5173
@@ -122,6 +153,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 The backend API will be available at:
+
 - **API**: http://localhost:8000
 - **API Docs (Swagger)**: http://localhost:8000/docs
 - **API Docs (ReDoc)**: http://localhost:8000/redoc
@@ -142,6 +174,7 @@ npm run dev
 ```
 
 The frontend will be available at:
+
 - **App**: http://localhost:5173
 
 ---
@@ -151,6 +184,7 @@ The frontend will be available at:
 You need to run both backend and frontend simultaneously:
 
 ### Terminal 1 - Backend
+
 ```bash
 cd backend
 source venv/bin/activate  # If using virtual environment
@@ -158,6 +192,7 @@ uvicorn main:app --reload --host 0.0.0.0 --port 8000
 ```
 
 ### Terminal 2 - Frontend
+
 ```bash
 cd frontend
 npm run dev
@@ -170,7 +205,9 @@ npm run dev
 ### Backend (FastAPI)
 
 #### GET `/`
+
 Health check endpoint
+
 ```json
 {
   "status": "ok",
@@ -179,7 +216,9 @@ Health check endpoint
 ```
 
 #### GET `/sensors`
+
 Get simulated sensor data for all pipes
+
 ```json
 {
   "pipes": [
@@ -193,7 +232,9 @@ Get simulated sensor data for all pipes
 ```
 
 #### GET `/leaks`
+
 Get pipes with detected leaks (pressure < 60 psi AND acoustic > 0.7)
+
 ```json
 {
   "leaks": [
@@ -216,11 +257,13 @@ Get pipes with detected leaks (pressure < 60 psi AND acoustic > 0.7)
 ### Setup
 
 1. Copy the example file:
+
 ```bash
 cp .env.example .env
 ```
 
 2. Edit `.env` and fill in your values:
+
 ```env
 # Supabase Configuration
 SUPABASE_URL=https://your-project-id.supabase.co
@@ -240,6 +283,7 @@ HOST=0.0.0.0
 ### Environment Variables Explained
 
 **Backend Variables:**
+
 - `SUPABASE_URL` - Supabase project URL (used by backend AI agents)
 - `SUPABASE_SERVICE_ROLE_KEY` - Service role key with admin privileges (keep secret!)
 - `OPENAI_API_KEY` - OpenAI API key for AI agent functionality
@@ -247,6 +291,7 @@ HOST=0.0.0.0
 - `HOST` - Backend server host (default: 0.0.0.0)
 
 **Frontend Variables (must start with `VITE_`):**
+
 - `VITE_SUPABASE_URL` - Supabase project URL (used by frontend)
 - `VITE_SUPABASE_PUBLISHABLE_KEY` - Supabase anon/public key (safe to expose)
 - `VITE_SUPABASE_PROJECT_ID` - Supabase project ID (optional, for reference)
@@ -258,6 +303,7 @@ HOST=0.0.0.0
 ## Technology Stack
 
 ### Frontend
+
 - **Framework**: React 18 with TypeScript
 - **Build Tool**: Vite
 - **Routing**: React Router v6
@@ -270,11 +316,13 @@ HOST=0.0.0.0
 - **Backend**: Supabase (real-time database)
 
 ### Backend
+
 - **Framework**: FastAPI
 - **Server**: Uvicorn
 - **Language**: Python 3.13+
 
 ### Database
+
 - **Primary**: Supabase (PostgreSQL)
 - **Real-time**: Supabase Realtime
 
@@ -283,52 +331,61 @@ HOST=0.0.0.0
 ## Features & Pages
 
 ### Landing Page (`/`)
+
 - System overview
 - Feature highlights
 - Team information
 - Call-to-action buttons
 
 ### Authentication (`/auth`)
+
 - User sign-in
 - Supabase authentication
 
 ### Dashboard (`/dashboard`)
+
 - Key metrics (Non-Revenue Water, Active Incidents, Energy Cost, Network Uptime)
 - Demand forecast chart
 - Recent events feed
 - AI agents status overview
 
 ### Network Twin (`/network`)
+
 - Interactive map with live network visualization
 - Real-time pipe isolation updates
 - Network statistics
 - Node and edge details
 
 ### Incidents (`/incidents`)
+
 - System events and alerts
 - Event timeline
 - Severity badges
 - Acknowledge and resolve actions
 
 ### AI Agents (`/agents`)
+
 - Multi-agent system overview
 - Agent status and confidence levels
 - Last decisions and metrics
 - Run simulation capabilities
 
 ### Energy Management (`/energy`)
+
 - Today's savings and efficiency metrics
 - Hourly energy pricing chart
 - Optimized pump schedule
 - Apply schedule actions
 
 ### Admin (`/admin`)
+
 - User management
 - System configuration
 - Alert thresholds
 - Agent settings
 
 ### Team (`/team`)
+
 - Team member profiles
 - Project information
 - Technology stack
@@ -340,18 +397,21 @@ HOST=0.0.0.0
 ### Frontend
 
 **Lint code:**
+
 ```bash
 cd frontend
 npm run lint
 ```
 
 **Build for production:**
+
 ```bash
 cd frontend
 npm run build
 ```
 
 **Preview production build:**
+
 ```bash
 cd frontend
 npm run preview
@@ -360,12 +420,14 @@ npm run preview
 ### Backend
 
 **Run with auto-reload (development):**
+
 ```bash
 cd backend
 uvicorn main:app --reload
 ```
 
 **Run in production:**
+
 ```bash
 cd backend
 uvicorn main:app --host 0.0.0.0 --port 8000
@@ -378,6 +440,7 @@ uvicorn main:app --host 0.0.0.0 --port 8000
 Complete wireframes for all pages and components are available in [WIREFRAMES.md](./WIREFRAMES.md).
 
 The wireframes document includes:
+
 - All page layouts
 - Component structures
 - Data flow diagrams
@@ -402,7 +465,9 @@ The system uses Supabase with the following main tables:
 ## Recent Updates
 
 ### Network Map Component (Latest)
+
 The Network Twin page (`/network`) has been updated to use vanilla Leaflet instead of react-leaflet for improved React 18 compatibility. This change:
+
 - Eliminates React Context consumer errors
 - Provides better performance and stability
 - Maintains all existing functionality (real-time updates, node/edge visualization, popups)
@@ -417,6 +482,7 @@ The map component (`/components/NetworkMap.tsx`) dynamically loads Leaflet on th
 ### Backend Issues
 
 **Problem**: `ModuleNotFoundError: No module named 'fastapi'`
+
 ```bash
 # Make sure you're in the backend directory and virtual environment is activated
 cd backend
@@ -425,6 +491,7 @@ pip install -r requirements.txt
 ```
 
 **Problem**: Port 8000 already in use
+
 ```bash
 # Use a different port
 uvicorn main:app --reload --port 8001
@@ -434,6 +501,7 @@ uvicorn main:app --reload --port 8001
 ### Frontend Issues
 
 **Problem**: `Cannot find module` errors
+
 ```bash
 # Clear node_modules and reinstall
 cd frontend
@@ -442,17 +510,20 @@ npm install
 ```
 
 **Problem**: Supabase connection errors
+
 - Check that `.env` file exists in the **root directory** (not in backend/ or frontend/)
 - Verify Supabase credentials are correct in the root `.env` file
 - Ensure all required variables are set (SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY)
 - Ensure Supabase project is running
 
 **Problem**: API calls failing
+
 - Ensure backend is running on port 8000
 - Check CORS settings in backend `main.py`
 - Verify API endpoint URLs in frontend code
 
 **Problem**: Map not loading or React errors on Network page
+
 - The map uses vanilla Leaflet (not react-leaflet) for React 18 compatibility
 - Ensure Leaflet CSS is properly imported
 - Check browser console for any Leaflet-specific errors
@@ -476,6 +547,7 @@ curl http://localhost:8000/leaks
 ```
 
 ### Test Frontend
+
 1. Open http://localhost:5173
 2. Navigate through all pages
 3. Check browser console for errors
@@ -488,6 +560,7 @@ curl http://localhost:8000/leaks
 ### Backend Deployment
 
 Recommended platforms:
+
 - **Railway**: Easy Python app deployment
 - **Heroku**: Classic PaaS
 - **AWS EC2**: Full control
@@ -496,6 +569,7 @@ Recommended platforms:
 ### Frontend Deployment
 
 Recommended platforms:
+
 - **Vercel**: Optimized for Vite/React
 - **Netlify**: Great for static sites
 - **AWS Amplify**: Full-stack deployment
@@ -518,22 +592,13 @@ Copyright © 2025 Team A.W.A.R.E. - San José State University
 
 - **Course**: CMPE-272: Enterprise Software Platforms
 - **Institution**: San José State University
-- **Instructor**: [Instructor Name]
+- **Instructor**: Rakesh Ranjan
 - **Semester**: Fall 2025
-
----
-
-## Contact
-
-For questions or support, please contact:
-- Raymond Li: raymond.li01@sjsu.edu
-- Sophia Atendido: sophia.atendido@sjsu.edu
-- Jack Liang: jack.liang@sjsu.edu
-- Dhruv Verma: dhruv.verma01@sjsu.edu
 
 ---
 
 ## Project Links
 
 - **Repository**: https://github.com/raymondli01/aware-water-agent
+- **Live Demo**: http://aware-water-alb-1513973059.us-east-1.elb.amazonaws.com/
 - **Documentation**: See [WIREFRAMES.md](./WIREFRAMES.md) for complete UI documentation
