@@ -64,7 +64,6 @@ aware-water-agent/
 ├── backend/                # FastAPI backend
 │   ├── main.py             # API endpoints
 │   ├── requirements.txt    # Python dependencies
-│   ├── .env                # Backend configuration
 │   └── README.md           # Backend documentation
 │
 ├── frontend/               # React + TypeScript frontend
@@ -75,13 +74,13 @@ aware-water-agent/
 │   │   └── hooks/          # Custom React hooks
 │   ├── public/             # Static assets
 │   ├── package.json        # Node dependencies
-│   ├── .env                # Frontend configuration
 │   └── README.md           # Frontend documentation
 │
 ├── supabase/               # Supabase configuration
 │   ├── config.toml         # Supabase settings
 │   └── migrations/         # Database migrations
 │
+├── .env                    # Project-wide environment variables
 ├── WIREFRAMES.md           # Complete UI wireframes
 └── README.md               # This file
 ```
