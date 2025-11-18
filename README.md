@@ -61,29 +61,29 @@ For questions or support, please contact any team member at the emails above.
 
 ```
 aware-water-agent/
-├── backend/              # FastAPI backend
-│   ├── main.py          # API endpoints
-│   ├── requirements.txt # Python dependencies
-│   ├── .env            # Backend configuration
-│   └── README.md       # Backend documentation
+├── backend/                # FastAPI backend
+│   ├── main.py             # API endpoints
+│   ├── requirements.txt    # Python dependencies
+│   ├── .env                # Backend configuration
+│   └── README.md           # Backend documentation
 │
-├── frontend/            # React + TypeScript frontend
-│   ├── src/            # Source code
-│   │   ├── pages/     # Route pages
-│   │   ├── components/ # Reusable components
-│   │   ├── lib/       # Utilities and stores
-│   │   └── hooks/     # Custom React hooks
-│   ├── public/         # Static assets
-│   ├── package.json    # Node dependencies
-│   ├── .env           # Frontend configuration
-│   └── README.md      # Frontend documentation
+├── frontend/               # React + TypeScript frontend
+│   ├── src/                # Source code
+│   │   ├── pages/          # Route pages
+│   │   ├── components/     # Reusable components
+│   │   ├── lib/            # Utilities and stores
+│   │   └── hooks/          # Custom React hooks
+│   ├── public/             # Static assets
+│   ├── package.json        # Node dependencies
+│   ├── .env                # Frontend configuration
+│   └── README.md           # Frontend documentation
 │
-├── supabase/           # Supabase configuration
-│   ├── config.toml    # Supabase settings
-│   └── migrations/    # Database migrations
+├── supabase/               # Supabase configuration
+│   ├── config.toml         # Supabase settings
+│   └── migrations/         # Database migrations
 │
-├── WIREFRAMES.md       # Complete UI wireframes
-└── README.md          # This file
+├── WIREFRAMES.md           # Complete UI wireframes
+└── README.md               # This file
 ```
 
 ---
