@@ -591,7 +591,7 @@ Copyright © 2025 Team A.W.A.R.E. - San José State University
 
 - **Course**: CMPE-272: Enterprise Software Platforms
 - **Institution**: San José State University
-- **Instructor**: Rakesh Ranjan
+- **Instructor**: Prof. Rakesh Ranjan
 - **Semester**: Fall 2025
 
 ---
