@@ -1,20 +1,20 @@
-import { ReactNode, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuthStore } from '@/lib/auth-store';
-import { Button } from './ui/button';
-import { Badge } from './ui/badge';
-import { NavLink } from './NavLink';
-import { 
-  LayoutDashboard, 
-  Network, 
-  AlertCircle, 
-  Bot, 
-  Zap, 
-  Settings, 
-  Users, 
+import { ReactNode, useEffect } from "react";
+import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useAuthStore } from "@/lib/auth-store";
+import { Button } from "./ui/button";
+import { Badge } from "./ui/badge";
+import { NavLink } from "./NavLink";
+import {
+  LayoutDashboard,
+  Network,
+  AlertCircle,
+  Bot,
+  Zap,
+  Settings,
+  Users,
   LogOut,
-  Droplets
-} from 'lucide-react';
+  Droplets,
+} from "lucide-react";
 
 interface LayoutProps {
   children: ReactNode;
@@ -30,8 +30,13 @@ const Layout = ({ children }: LayoutProps) => {
   }, [initialize]);
 
   useEffect(() => {
-    if (!loading && !user && location.pathname !== '/auth' && location.pathname !== '/') {
-      navigate('/auth');
+    if (
+      !loading &&
+      !user &&
+      location.pathname !== "/auth" &&
+      location.pathname !== "/"
+    ) {
+      navigate("/auth");
     }
   }, [user, loading, navigate, location.pathname]);
 
@@ -51,19 +56,21 @@ const Layout = ({ children }: LayoutProps) => {
   }
 
   const navItems = [
-    { to: '/dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-    { to: '/network', icon: Network, label: 'Network Twin' },
-    { to: '/incidents', icon: AlertCircle, label: 'Incidents' },
-    { to: '/agents', icon: Bot, label: 'Agents' },
-    { to: '/energy', icon: Zap, label: 'Energy' },
-    ...(role === 'admin' ? [{ to: '/admin', icon: Settings, label: 'Admin' }] : []),
-    { to: '/team', icon: Users, label: 'Team' },
+    { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard" },
+    { to: "/network", icon: Network, label: "Network Twin" },
+    { to: "/incidents", icon: AlertCircle, label: "Incidents" },
+    { to: "/agents", icon: Bot, label: "Agents" },
+    { to: "/energy", icon: Zap, label: "Energy" },
+    ...(role === "admin"
+      ? [{ to: "/admin", icon: Settings, label: "Admin" }]
+      : []),
+    { to: "/team", icon: Users, label: "Team" },
   ];
 
   const roleColors = {
-    admin: 'destructive',
-    engineer: 'secondary',
-    operator: 'default',
+    admin: "destructive",
+    engineer: "secondary",
+    operator: "default",
   } as const;
 
   return (
@@ -71,15 +78,18 @@ const Layout = ({ children }: LayoutProps) => {
       <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center justify-between">
           <div className="flex items-center gap-8">
-            <div className="flex items-center gap-2">
+            <Link
+              to="/"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+            >
               <div className="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                 <Droplets className="w-5 h-5 text-primary" />
               </div>
               <span className="font-bold text-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                 A.W.A.R.E.
               </span>
-            </div>
-            
+            </Link>
+
             <nav className="hidden md:flex items-center gap-1">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -99,8 +109,10 @@ const Layout = ({ children }: LayoutProps) => {
           </div>
 
           <div className="flex items-center gap-3">
-            <Badge variant={roleColors[role as keyof typeof roleColors] || 'default'}>
-              {role || 'operator'}
+            <Badge
+              variant={roleColors[role as keyof typeof roleColors] || "default"}
+            >
+              {role || "operator"}
             </Badge>
             <Button
               variant="ghost"
@@ -115,9 +127,7 @@ const Layout = ({ children }: LayoutProps) => {
         </div>
       </header>
 
-      <main className="container py-6">
-        {children}
-      </main>
+      <main className="container py-6">{children}</main>
     </div>
   );
 };
